@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -26,6 +27,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/cart', function () {
         return view('cart');
     })->name('cart');
+
+    Route::resource('products', ProductController::class);
 
     // 5. Product Details (If you want to hide add-to-cart behind login)
     // Route::get('/product/{id}', [...]);
