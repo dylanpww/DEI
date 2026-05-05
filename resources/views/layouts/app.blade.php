@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         :root {
             --green-dark: #1a3c2c;
@@ -422,6 +423,14 @@
             min-width: 180px;
             overflow: hidden;
         }
+        .dropdown-menu::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 0;
+            width: 100%;
+            height: 10px;
+        }
         .user-dropdown:hover .dropdown-menu { display: block; }
         .dropdown-item {
             display: block;
@@ -449,12 +458,12 @@
         </form>
 
         <div class="nav-actions">
-            <a href="{{ route('products.index') }}" class="nav-link">Explore</a>
+            <a href="{{ url('#') }}" class="nav-link">Explore</a>
 
             @auth
-                <a href="{{ route('cart.index') }}" class="nav-link cart-badge">
+                <a href="{{ url('#') }}" class="nav-link cart-badge">
                     🛒 Cart
-                    @php $cartCount = auth()->user()->getCartOrCreate()->items()->count(); @endphp
+                    @php $cartCount = 0; // TODO: Implement cart logic @endphp
                     @if($cartCount > 0)
                         <span class="cart-count">{{ $cartCount }}</span>
                     @endif
@@ -462,13 +471,14 @@
 
                 <div class="user-dropdown">
                     <button class="user-btn">
-                        👤 {{ auth()->user()->username }}
+                        👤 {{ auth()->user()->name }}
                     </button>
                     <div class="dropdown-menu">
-                        <a href="{{ route('orders.index') }}" class="dropdown-item">📦 My Orders</a>
+                        <a href="{{ route('profile.edit') }}" class="dropdown-item">⚙️ Edit Profile</a>
+                        <a href="{{ url('#') }}" class="dropdown-item">📦 My Orders</a>
                         @if(auth()->user()->role === 'seller')
                             <div class="dropdown-divider"></div>
-                            <a href="{{ route('products.create') }}" class="dropdown-item">➕ List Food</a>
+                            <a href="{{ url('#') }}" class="dropdown-item">➕ List Food</a>
                         @endif
                         <div class="dropdown-divider"></div>
                         <form method="POST" action="{{ route('logout') }}">
@@ -496,6 +506,15 @@
         </div>
     @endif
 
+    @if (isset($header))
+        <header class="bg-white shadow mb-6 rounded-lg overflow-hidden">
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                {{ $header }}
+            </div>
+        </header>
+    @endif
+
+    {{ $slot ?? '' }}
     @yield('content')
 </main>
 
