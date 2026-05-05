@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('explore');
-});
+})->name('explore');
 
 
 Route::middleware('auth')->group(function () {
