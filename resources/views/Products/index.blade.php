@@ -4,9 +4,11 @@
 <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
     <div class="flex justify-between items-center mb-6">
         <h2 class="text-2xl font-extrabold text-crave-teal">My Products</h2>
+        @if($isVendor)
         <a href="{{ route('products.create') }}" class="bg-crave-lime hover:bg-crave-green text-crave-teal font-bold py-2 px-4 rounded-lg transition-colors flex items-center gap-2">
             <ion-icon name="add-circle-outline"></ion-icon> Add New Product
         </a>
+        @endif
     </div>
 
     @if(session('success'))
@@ -24,7 +26,9 @@
                     <th class="p-4 border-b">Price</th>
                     <th class="p-4 border-b">Stock</th>
                     <th class="p-4 border-b">Status</th>
+                    @if($isVendor)
                     <th class="p-4 border-b text-right">Actions</th>
+                    @endif
                 </tr>
             </thead>
             <tbody class="text-gray-700">
@@ -44,6 +48,7 @@
                             {{ ucfirst($product->status) }}
                         </span>
                     </td>
+                    @if($isVendor)
                     <td class="p-4 border-b text-right flex justify-end gap-2">
                         <a href="{{ route('products.show', $product->product_ID) }}" class="text-crave-teal hover:text-white hover:bg-crave-teal bg-gray-100 p-2 rounded-md transition-colors">
                             <ion-icon name="eye-outline"></ion-icon>
@@ -59,10 +64,11 @@
                             </button>
                         </form>
                     </td>
+                    @endif
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="p-4 text-center text-gray-500">No products found. Start saving food!</td>
+                    <td colspan="{{ $isVendor ? '6' : '5' }}" class="p-4 text-center text-gray-500">No products found. Start saving food!</td>
                 </tr>
                 @endforelse
             </tbody>

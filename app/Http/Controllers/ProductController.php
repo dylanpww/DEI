@@ -11,13 +11,23 @@ class ProductController extends Controller
 {
     public function index()
     {
+        // Hanya vendor/admin yang bisa akses halaman produk mereka
+        if (Auth::user()->role !== 'vendor' && Auth::user()->role !== 'admin') {
+            abort(403, 'Only vendors can manage products.');
+        }
+        
         // Mengambil produk milik user yang sedang login beserta data kategorinya
         $products = Product::with('category')->where('user_id', Auth::id())->get();
-        return view('products.index', compact('products'));
+        $isVendor = Auth::user()->role === 'vendor' || Auth::user()->role === 'admin';
+        return view('products.index', compact('products', 'isVendor'));
     }
 
     public function create()
     {
+        if (Auth::user()->role !== 'vendor' && Auth::user()->role !== 'admin') {
+            abort(403, 'Only vendors can add products.');
+        }
+        
         // Mengambil semua kategori untuk dropdown form
         $categories = Category::all();
         return view('products.create', compact('categories'));
@@ -25,6 +35,10 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+        if (Auth::user()->role !== 'vendor' && Auth::user()->role !== 'admin') {
+            abort(403, 'Only vendors can add products.');
+        }
+        
         $request->validate([
             'name' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,category_id',
@@ -51,7 +65,7 @@ class ProductController extends Controller
     {
         $product = Product::with('category')->findOrFail($id);
         
-        // Pastikan user tidak bisa melihat detail produk orang lain (opsional)
+        // Pastikan user tidak bisa melihat detail produk orang lain (hanya vendor/admin punya produk)
         if ($product->user_id !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
@@ -61,6 +75,10 @@ class ProductController extends Controller
 
     public function edit($id)
     {
+        if (Auth::user()->role !== 'vendor' && Auth::user()->role !== 'admin') {
+            abort(403, 'Only vendors can edit products.');
+        }
+        
         $product = Product::findOrFail($id);
         $categories = Category::all();
         return view('products.edit', compact('product', 'categories'));
@@ -68,6 +86,10 @@ class ProductController extends Controller
 
     public function update(Request $request, $id)
     {
+        if (Auth::user()->role !== 'vendor' && Auth::user()->role !== 'admin') {
+            abort(403, 'Only vendors can update products.');
+        }
+        
         $request->validate([
             'name' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,category_id',
@@ -85,9 +107,31 @@ class ProductController extends Controller
 
     public function destroy($id)
     {
+        if (Auth::user()->role !== 'vendor' && Auth::user()->role !== 'admin') {
+            abort(403, 'Only vendors can delete products.');
+        }
+        
         $product = Product::findOrFail($id);
         $product->delete();
 
         return redirect()->route('products.index')->with('success', 'Product deleted successfully!');
+    }
+
+    public function byCategory($categoryId)
+    {
+        $category = Category::findOrFail($categoryId);
+        $search = request('search');
+        
+        $query = Product::query();
+        $query->where('category_id', '=', $categoryId);
+        $query->where('status', '!=', 'expired');
+        
+        if ($search) {
+            $query->where('name', 'like', '%' . $search . '%');
+        }
+        
+        $products = $query->with('category')->paginate(12);
+        
+        return view('products.by-category', compact('category', 'products', 'search'));
     }
 }
