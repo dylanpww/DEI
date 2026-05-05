@@ -52,6 +52,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/cart/decrease', [CartController::class, 'decrease'])->name('cart.decrease');
     Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
     Route::post('/cart/select-address', [CartController::class, 'selectAddress'])->name('cart.selectAddress');
+    Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
+    Route::post('/checkout/process', [CartController::class, 'process'])->name('checkout.process');
 
     Route::resource('products', ProductController::class);
 

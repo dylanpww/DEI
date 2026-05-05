@@ -101,6 +101,55 @@ class CartController extends Controller
         return redirect()->route('cart')->with('success', 'Delivery address updated!');
     }
 
+    public function checkout()
+    {
+        $cartData = session()->get('cart', []);
+        
+        // Jika keranjang kosong, kembalikan ke halaman cart
+        if (empty($cartData)) {
+            return redirect()->route('cart')->with('error', 'Your cart is empty.');
+        }
+
+        $cartItems = collect($cartData)->map(function ($item) {
+            return (object) $item;
+        });
+
+        $totalPrice = $cartItems->sum(function($item) {
+            return $item->price * $item->quantity;
+        });
+
+        // Ambil alamat yang dipilih
+        $selectedAddressId = session()->get('selected_address_id');
+        $selectedAddress = null;
+
+        if ($selectedAddressId) {
+            $selectedAddress = \App\Models\Address::where('Address_ID', $selectedAddressId)
+            ->where('user_ID', \Illuminate\Support\Facades\Auth::id())
+            ->first();
+        }
+
+        // VALIDASI: Cegah masuk ke checkout jika belum memilih alamat
+        if (!$selectedAddress) {
+            return redirect()->route('cart')->with('error', 'Please select a delivery address before checking out.');
+        }
+
+        // Kirim data ke tampilan checkout
+        return view('checkout', compact('cartItems', 'totalPrice', 'selectedAddress'));
+    }
+
+    public function process(\Illuminate\Http\Request $request)
+    {
+        // 1. (Opsional) Di sinilah biasanya Anda menyimpan data pesanan (Order) ke Database
+        // $paymentMethod = $request->input('payment_method');
+        // Order::create([...]);
+
+        // 2. Kosongkan keranjang belanja karena sudah dibayar
+        session()->forget('cart');
+        
+        // 3. Arahkan kembali ke halaman Home dengan pesan sukses
+        return redirect()->route('home')->with('success', 'Payment successful! Thank you for your order.');
+    }
+
     public function increase(Request $request)
     {
         $request->validate(['product_id' => 'required']);

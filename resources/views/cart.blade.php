@@ -82,9 +82,9 @@
                 </div>
             </div>
 
-            <button class="w-full bg-crave-green hover:bg-crave-darkgreen text-white font-bold text-lg py-4 rounded-2xl shadow-md transition-all transform hover:-translate-y-0.5 flex justify-center items-center gap-2">
+            <a href="{{ route('checkout') }}" class="w-full bg-crave-green hover:bg-crave-darkgreen text-white font-bold text-lg py-4 rounded-2xl shadow-md transition-all transform hover:-translate-y-0.5 flex justify-center items-center gap-2">
                 Go to Checkout <ion-icon name="arrow-forward-outline"></ion-icon>
-            </button>
+            </a>
         </div>
 
     @else
