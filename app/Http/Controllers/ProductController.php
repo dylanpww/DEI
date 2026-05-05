@@ -109,7 +109,15 @@ class ProductController extends Controller
 
         $product = Product::findOrFail($id);
         
-        $data = $request->all();
+        $data = [
+            'name' => $request->name,
+            'category_id' => $request->category_id,
+            'actualPrice' => $request->actualPrice,
+            'discount' => $request->discount,
+            'stock' => $request->stock,
+            'status' => $request->status,
+        ];
+
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('products', 'public');
         }
