@@ -72,7 +72,7 @@
                     <div class="relative group">
                         <button class="hover:text-crave-teal transition-colors flex items-center gap-2">
                             <ion-icon name="person-circle-outline"></ion-icon>
-                            <span class="text-sm font-medium">{{ auth()->user()->name }}</span>
+                            <span class="text-sm font-medium">{{ auth()->user()->username }}</span>
                         </button>
                         
                         <!-- Dropdown panel -->
