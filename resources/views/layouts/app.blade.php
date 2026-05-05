@@ -50,6 +50,7 @@
                 </a>
 
                 <!-- Desktop Menu -->
+                <!-- Desktop Menu -->
                 <nav class="hidden md:flex space-x-10 text-gray-600 font-medium text-lg">
                     <a href="/home" class="{{ request()->is('home') ? 'text-crave-darkgreen border-b-2 border-crave-lime' : 'hover:text-crave-lime' }} transition-colors pb-1">Shop</a>
                     <a href="/explore" class="{{ request()->is('explore') ? 'text-crave-darkgreen border-b-2 border-crave-lime' : 'hover:text-crave-lime' }} transition-colors pb-1">Explore</a>
@@ -57,6 +58,9 @@
                         Cart 
                         <span class="ml-2 bg-crave-pink text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">2</span>
                     </a>
+                    @if(auth()->check() && (Auth::user()->role === 'vendor' || Auth::user()->role === 'admin'))
+                    <a href="{{ route('products.index') }}" class="{{ request()->is('products*') ? 'text-crave-darkgreen border-b-2 border-crave-lime' : 'hover:text-crave-lime' }} transition-colors pb-1">Products</a>
+                    @endif
                 </nav>
 
                 <!-- User Profile / Actions -->

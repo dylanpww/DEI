@@ -7,10 +7,12 @@
         <div class="flex items-center gap-4 flex-wrap">
             <h1 class="font-bold text-3xl text-crave-teal">Explore Categories</h1>
 
-            <a href="{{ auth()->check() ? route('products.index') : route('login') }}" class="inline-flex items-center gap-2 rounded-full bg-crave-lime px-5 py-3 text-sm font-bold text-crave-teal shadow-sm transition-colors hover:bg-crave-green">
+            @if(auth()->check() && (Auth::user()->role === 'vendor' || Auth::user()->role === 'admin'))
+            <a href="{{ route('products.index') }}" class="inline-flex items-center gap-2 rounded-full bg-crave-lime px-5 py-3 text-sm font-bold text-crave-teal shadow-sm transition-colors hover:bg-crave-green">
                 <ion-icon name="pricetag-outline"></ion-icon>
                 Products
             </a>
+            @endif
         </div>
         
         <div class="relative w-full md:w-96">
