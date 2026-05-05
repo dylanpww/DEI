@@ -15,7 +15,13 @@ Route::get('/', function () {
 
 Route::get('/explore', function () {
     $categories = \App\Models\Category::all();
-    return view('explore', compact('categories'));
+    $products = \App\Models\Product::with('category')
+        ->where('status', '!=', 'expired')
+        ->latest()
+        ->take(12)
+        ->get();
+
+    return view('explore', compact('categories', 'products'));
 })->name('explore');
 
 Route::get('/dashboard', function () {
