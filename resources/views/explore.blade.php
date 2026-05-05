@@ -19,19 +19,21 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto">
         
-        <a href="#" class="bg-crave-lime rounded-3xl p-8 flex flex-col items-center justify-center aspect-square shadow-sm transform hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
-            <div class="h-24 w-24 mb-5 bg-white rounded-full bg-opacity-30 flex items-center justify-center text-5xl"><ion-icon name="nutrition-outline" class="text-crave-teal"></ion-icon></div>
-            <span class="font-bold text-2xl text-crave-teal text-center leading-tight">Makanan</span>
-            <p class="mt-3 text-sm text-crave-teal text-center opacity-80">Semua kategori makanan tersedia di sini</p>
+        @foreach($categories as $category)
+        <a href="{{ route('products.by-category', $category->category_id) }}" class="rounded-3xl p-8 flex flex-col items-center justify-center aspect-square shadow-sm transform hover:-translate-y-2 hover:shadow-lg transition-all duration-300 {{ $category->name === 'Makanan' ? 'bg-crave-lime' : 'bg-crave-lightpink' }}">
+            <div class="h-24 w-24 mb-5 bg-white rounded-full bg-opacity-30 flex items-center justify-center text-5xl">
+                @if($category->name === 'Makanan')
+                    <ion-icon name="nutrition-outline" class="text-crave-teal"></ion-icon>
+                @else
+                    <ion-icon name="cafe-outline" class="text-white"></ion-icon>
+                @endif
+            </div>
+            <span class="font-bold text-2xl {{ $category->name === 'Makanan' ? 'text-crave-teal' : 'text-white' }} text-center leading-tight">{{ $category->name }}</span>
+            <p class="mt-3 text-sm {{ $category->name === 'Makanan' ? 'text-crave-teal' : 'text-white' }} text-center opacity-80">{{ $category->description }}</p>
         </a>
-
-        <a href="#" class="bg-crave-lightpink rounded-3xl p-8 flex flex-col items-center justify-center aspect-square shadow-sm transform hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
-            <div class="h-24 w-24 mb-5 bg-white rounded-full bg-opacity-30 flex items-center justify-center text-5xl"><ion-icon name="cafe-outline" class="text-white"></ion-icon></div>
-            <span class="font-bold text-2xl text-white text-center leading-tight">Minuman</span>
-            <p class="mt-3 text-sm text-white text-center opacity-80">Semua kategori minuman tersedia di sini</p>
-        </a>
+        @endforeach
 
     </div>
 </div>

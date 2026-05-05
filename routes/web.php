@@ -16,15 +16,19 @@ Route::get('/', function () {
 })->name('welcome');
 
 Route::get('/explore', function () {
-    return view('explore');
+    $categories = \App\Models\Category::all();
+    return view('explore', compact('categories'));
 })->name('explore');
+
+Route::get('/category/{categoryId}', [ProductController::class, 'byCategory'])->name('products.by-category');
 
 
 Route::middleware('auth')->group(function () {
     
     // 3. Shop / Home Screen (Where users buy items)
     Route::get('/home', function () {
-        return view('explore'); // Assuming you have the home view created
+        $categories = \App\Models\Category::all();
+        return view('explore', compact('categories'));
     })->name('home');
 
     // 4. Cart Screen
