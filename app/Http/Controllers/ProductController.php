@@ -12,20 +12,20 @@ class ProductController extends Controller
     public function index()
     {
         // Hanya vendor/admin yang bisa akses halaman produk mereka
-        if (Auth::user()->role !== 'vendor' && Auth::user()->role !== 'admin') {
-            abort(403, 'Only vendors can manage products.');
+        if (Auth::user()->role !== 'seller' && Auth::user()->role !== 'admin') {
+            abort(403, 'Only sellers can manage products.');
         }
         
         // Mengambil produk milik user yang sedang login beserta data kategorinya
         $products = Product::with('category')->where('user_id', Auth::id())->get();
-        $isVendor = Auth::user()->role === 'vendor' || Auth::user()->role === 'admin';
-        return view('products.index', compact('products', 'isVendor'));
+        $isSeller = Auth::user()->role === 'seller' || Auth::user()->role === 'admin';
+        return view('products.index', compact('products', 'isSeller'));
     }
 
     public function create()
     {
-        if (Auth::user()->role !== 'vendor' && Auth::user()->role !== 'admin') {
-            abort(403, 'Only vendors can add products.');
+        if (Auth::user()->role !== 'seller' && Auth::user()->role !== 'admin') {
+            abort(403, 'Only sellers can add products.');
         }
         
         // Mengambil semua kategori untuk dropdown form
@@ -35,8 +35,8 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        if (Auth::user()->role !== 'vendor' && Auth::user()->role !== 'admin') {
-            abort(403, 'Only vendors can add products.');
+        if (Auth::user()->role !== 'seller' && Auth::user()->role !== 'admin') {
+            abort(403, 'Only sellers can add products.');
         }
         
         $request->validate([
@@ -82,8 +82,8 @@ class ProductController extends Controller
 
     public function edit($id)
     {
-        if (Auth::user()->role !== 'vendor' && Auth::user()->role !== 'admin') {
-            abort(403, 'Only vendors can edit products.');
+        if (Auth::user()->role !== 'seller' && Auth::user()->role !== 'admin') {
+            abort(403, 'Only sellers can edit products.');
         }
         
         $product = Product::findOrFail($id);
@@ -93,8 +93,8 @@ class ProductController extends Controller
 
     public function update(Request $request, $id)
     {
-        if (Auth::user()->role !== 'vendor' && Auth::user()->role !== 'admin') {
-            abort(403, 'Only vendors can update products.');
+        if (Auth::user()->role !== 'seller' && Auth::user()->role !== 'admin') {
+            abort(403, 'Only sellers can update products.');
         }
         
         $request->validate([
@@ -129,8 +129,8 @@ class ProductController extends Controller
 
     public function destroy($id)
     {
-        if (Auth::user()->role !== 'vendor' && Auth::user()->role !== 'admin') {
-            abort(403, 'Only vendors can delete products.');
+        if (Auth::user()->role !== 'seller' && Auth::user()->role !== 'admin') {
+            abort(403, 'Only sellers can delete products.');
         }
         
         $product = Product::findOrFail($id);
