@@ -34,7 +34,7 @@ class AddressController extends Controller
 
         Address::create($validated);
 
-        return redirect()->route('addresses.myAddress')->with('success', 'Alamat berhasil ditambahkan!');
+        return redirect()->route('cart')->with('success', 'Alamat berhasil ditambahkan!');
     }
 
     public function edit(Address $address)
