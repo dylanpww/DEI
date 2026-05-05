@@ -4,18 +4,21 @@ use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AddressController;
 
-
 // ==========================================
 // PUBLIC ROUTES (No login required)
 // ==========================================
-
-
 
 Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
 Route::get('/explore', function () {
+    return view('explore');
+})->name('explore');
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
     $categories = \App\Models\Category::all();
     return view('explore', compact('categories'));
 })->name('explore');
@@ -24,7 +27,12 @@ Route::get('/category/{categoryId}', [ProductController::class, 'byCategory'])->
 
 
 Route::middleware('auth')->group(function () {
-    
+    // Profile Routes
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
     // 3. Shop / Home Screen (Where users buy items)
     Route::get('/home', function () {
         $categories = \App\Models\Category::all();
@@ -45,4 +53,4 @@ Route::middleware('auth')->group(function () {
 
 // Breeze Auth Routes (Login, Register, etc.)
 require __DIR__.'/auth.php';
-require __DIR__.'/auth.php';
+

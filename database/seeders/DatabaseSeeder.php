@@ -20,6 +20,11 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Minuman', 'description' => 'Kategori untuk semua jenis minuman.'],
         ];
 
+        User::factory()->create([
+            'username' => 'Test User',
+            'email' => 'test@example.com',
+            'role' => 'user',
+        ]);
         foreach ($categories as $category) {
             Category::updateOrCreate(
                 ['name' => $category['name']],
