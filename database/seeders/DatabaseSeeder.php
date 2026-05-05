@@ -15,16 +15,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $categories = [
-            ['name' => 'Makanan', 'description' => 'Kategori untuk semua jenis makanan.'],
-            ['name' => 'Minuman', 'description' => 'Kategori untuk semua jenis minuman.'],
-        ];
-
-        foreach ($categories as $category) {
-            Category::updateOrCreate(
-                ['name' => $category['name']],
-                ['description' => $category['description']]
-            );
-        }
+        $this->call([
+            
+            CategorySeeder::class, 
+            ProductSeeder::class,  
+        ]);
     }
 }
