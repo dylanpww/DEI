@@ -34,13 +34,23 @@
                 </div>
                 
                 <div class="flex items-center space-x-3 bg-white p-1 rounded-full border border-gray-200 shadow-sm">
-                    <button class="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-crave-teal transition-colors">
-                        <ion-icon name="remove"></ion-icon>
-                    </button>
+                    <form action="{{ route('cart.decrease') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="product_id" value="{{ $item->id }}">
+                        <button type="submit" class="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-crave-teal transition-colors">
+                            <ion-icon name="remove"></ion-icon>
+                        </button>
+                    </form>
+
                     <span class="font-bold text-crave-teal w-4 text-center">{{ $item->quantity }}</span>
-                    <button class="w-8 h-8 rounded-full flex items-center justify-center bg-crave-lime text-white hover:bg-crave-green transition-colors">
-                        <ion-icon name="add"></ion-icon>
-                    </button>
+
+                    <form action="{{ route('cart.increase') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="product_id" value="{{ $item->id }}">
+                        <button type="submit" class="w-8 h-8 rounded-full flex items-center justify-center bg-crave-lime text-white hover:bg-crave-green transition-colors">
+                            <ion-icon name="add"></ion-icon>
+                        </button>
+                    </form>
                 </div>
             </div>
             @endforeach

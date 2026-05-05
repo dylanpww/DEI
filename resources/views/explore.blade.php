@@ -67,9 +67,14 @@
                             </span>
                         </div>
 
-                        <button class="w-full bg-crave-lime hover:bg-crave-green text-crave-teal font-bold py-2 px-4 rounded-lg transition-colors">
-                            Add to Cart
-                        </button>
+                        <form action="{{ route('cart.add') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="product_id" value="{{ $product->product_ID }}">
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="w-full bg-crave-lime hover:bg-crave-green text-crave-teal font-bold py-2 px-4 rounded-lg transition-colors">
+                                Add to Cart
+                            </button>
+                        </form>
                     </div>
                 </div>
                 @endforeach

@@ -45,11 +45,12 @@ Route::middleware('auth')->group(function () {
     })->name('home');
 
     // 4. Cart Screen
-    Route::get('/cart', function () {
-        return view('cart');
-    })->name('cart');
+    Route::get('/cart', [CartController::class, 'index'])->name('cart');
 
     Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+    Route::post('/cart/increase', [CartController::class, 'increase'])->name('cart.increase');
+    Route::post('/cart/decrease', [CartController::class, 'decrease'])->name('cart.decrease');
+    Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
 
     Route::resource('products', ProductController::class);
 

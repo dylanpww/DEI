@@ -30,20 +30,22 @@ class CartController extends Controller
         $request->validate([
             'product_id' => 'required|exists:products,product_id',
         ]);
-
-        // Cari produk dari database
-        $product = Product::where('product_id', $request->product_id)->firstOrFail();
+        
+        $product = Product::findOrFail($request->product_id);
 
         // Ambil keranjang saat ini dari session
         $cart = session()->get('cart', []);
 
+        // Use the model's primary key `product_ID` as the cart key
+        $pid = $product->product_ID;
+
         // Jika barang sudah ada di keranjang, tambah quantity-nya
-        if (isset($cart[$product->product_id])) {
-            $cart[$product->product_id]['quantity']++;
+        if (isset($cart[$pid])) {
+            $cart[$pid]['quantity']++;
         } else {
             // Jika belum ada, masukkan sebagai barang baru
-            $cart[$product->product_id] = [
-                'id' => $product->product_id,
+            $cart[$pid] = [
+                'id' => $pid,
                 'name' => $product->name,
                 'price' => $product->actualPrice - $product->discount, // Harga setelah diskon
                 'image_url' => $product->image ? asset('storage/' . $product->image) : '',
@@ -56,5 +58,44 @@ class CartController extends Controller
         session()->put('cart', $cart);
 
         return redirect()->route('cart')->with('success', 'Barang berhasil ditambahkan!');
+    }
+
+    public function increase(Request $request)
+    {
+        $request->validate(['product_id' => 'required']);
+        $cart = session()->get('cart', []);
+        $pid = $request->product_id;
+        if (isset($cart[$pid])) {
+            $cart[$pid]['quantity']++;
+            session()->put('cart', $cart);
+        }
+        return redirect()->route('cart');
+    }
+
+    public function decrease(Request $request)
+    {
+        $request->validate(['product_id' => 'required']);
+        $cart = session()->get('cart', []);
+        $pid = $request->product_id;
+        if (isset($cart[$pid])) {
+            $cart[$pid]['quantity']--;
+            if ($cart[$pid]['quantity'] <= 0) {
+                unset($cart[$pid]);
+            }
+            session()->put('cart', $cart);
+        }
+        return redirect()->route('cart');
+    }
+
+    public function remove(Request $request)
+    {
+        $request->validate(['product_id' => 'required']);
+        $cart = session()->get('cart', []);
+        $pid = $request->product_id;
+        if (isset($cart[$pid])) {
+            unset($cart[$pid]);
+            session()->put('cart', $cart);
+        }
+        return redirect()->route('cart');
     }
 }
