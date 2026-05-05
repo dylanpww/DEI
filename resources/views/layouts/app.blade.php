@@ -57,9 +57,18 @@
                 <nav class="hidden md:flex space-x-10 text-gray-600 font-medium text-lg">
                     <a href="{{ route('explore') }}" class="{{ request()->is('explore') ? 'text-crave-darkgreen border-b-2 border-crave-lime' : 'hover:text-crave-lime' }} transition-colors pb-1">Explore</a>
                     <a href="{{ route('cart') }}" class="{{ request()->is('cart') ? 'text-crave-darkgreen border-b-2 border-crave-lime' : 'hover:text-crave-lime' }} transition-colors pb-1 flex items-center">
-                        Cart 
-                        <span class="ml-2 bg-crave-pink text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">2</span>
-                    </a>
+    Cart 
+    @php
+        // Mengambil semua 'quantity' dari tiap item di session cart dan menjumlahkannya
+        $totalQty = array_sum(array_column(session('cart', []), 'quantity'));
+    @endphp
+
+    @if($totalQty > 0)
+        <span class="ml-2 bg-crave-pink text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+            {{ $totalQty }}
+        </span>
+    @endif
+</a>
                     @if(auth()->check() && (Auth::user()->role === 'seller' || Auth::user()->role === 'admin'))
                     <a href="{{ route('products.index') }}" class="{{ request()->is('products*') ? 'text-crave-darkgreen border-b-2 border-crave-lime' : 'hover:text-crave-lime' }} transition-colors pb-1">My Shop</a>
                     @endif
