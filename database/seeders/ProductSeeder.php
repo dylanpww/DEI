@@ -51,8 +51,8 @@ class ProductSeeder extends Seeder
                 'actualPrice' => 25000.00,
                 'discount' => 10000.00,
                 'stock' => 3,
-                    'status' => 'available',
-                    'image' => 'makanan/makan.jpg'
+                'status' => 'available',
+                'image' => 'makanan/makan.jpg'
             ],
             [
                 'user_id' => $seller->user_ID,

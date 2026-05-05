@@ -1,8 +1,9 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AddressController;
+use Illuminate\Support\Facades\Route;
 
 // ==========================================
 // PUBLIC ROUTES (No login required)
@@ -13,18 +14,15 @@ Route::get('/', function () {
 })->name('welcome');
 
 Route::get('/explore', function () {
-    return view('explore');
+    $categories = \App\Models\Category::all();
+    return view('explore', compact('categories'));
 })->name('explore');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
-    $categories = \App\Models\Category::all();
-    return view('explore', compact('categories'));
-})->name('explore');
 
 Route::get('/category/{categoryId}', [ProductController::class, 'byCategory'])->name('products.by-category');
-
 
 Route::middleware('auth')->group(function () {
     // Profile Routes
@@ -53,4 +51,3 @@ Route::middleware('auth')->group(function () {
 
 // Breeze Auth Routes (Login, Register, etc.)
 require __DIR__.'/auth.php';
-
