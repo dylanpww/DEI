@@ -25,10 +25,11 @@
             @foreach($products as $product)
             <div class="bg-gray-50 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
                 <div class="h-48 bg-crave-beige flex items-center justify-center overflow-hidden">
-                    @if($product->image)
+                    @php $stored = $product->image && file_exists(storage_path('app/public/' . $product->image)); @endphp
+                    @if($stored)
                         <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
                     @else
-                        <ion-icon name="image-outline" class="text-4xl text-gray-300"></ion-icon>
+                        <img src="{{ asset('images/placeholder.svg') }}" alt="No image" class="w-24 h-24 object-contain">
                     @endif
                 </div>
                 <div class="p-4">
@@ -47,9 +48,16 @@
                         </span>
                     </div>
 
-                    <button class="w-full bg-crave-lime hover:bg-crave-green text-crave-teal font-bold py-2 px-4 rounded-lg transition-colors">
-                        Add to Cart
-                    </button>
+                    <form action="{{ route('cart.add') }}" method="POST">
+    @csrf
+    <input type="hidden" name="product_id" value="{{ $product->product_id }}">
+    <input type="hidden" name="quantity" value="1">
+
+    <button type="submit" class="w-full bg-crave-lime hover:bg-crave-green text-crave-teal font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
+        <ion-icon name="cart-outline"></ion-icon>
+        Add to Cart
+    </button>
+</form>
                 </div>
             </div>
             @endforeach

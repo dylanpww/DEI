@@ -24,10 +24,10 @@
             <div class="flex items-center justify-between bg-gray-50/50 p-4 rounded-2xl border border-gray-100 hover:border-crave-lime/50 transition-colors">
                 <div class="flex items-center space-x-4">
                     <div class="w-20 h-20 bg-crave-beige rounded-xl flex items-center justify-center p-2 shadow-inner">
-                        <img src="{{ $item->product->image_url }}" alt="{{ $item->product->name }}" class="object-contain w-full h-full drop-shadow-sm">
+                        <img src="{{ $item->image_url }}" alt="{{ $item->name }}" class="object-contain w-full h-full drop-shadow-sm">
                     </div>
                     <div class="flex flex-col justify-center">
-                        <h3 class="font-bold text-base text-crave-teal">{{ $item->product->name }}</h3>
+                        <h3 class="font-bold text-base text-crave-teal">{{ $item->name }}</h3>
                         <p class="text-xs text-gray-500 mb-1">{{ $item->unit }}</p>
                         <p class="font-extrabold text-sm text-crave-darkgreen">Rp {{ number_format($item->price, 0, ',', '.') }}</p>
                     </div>

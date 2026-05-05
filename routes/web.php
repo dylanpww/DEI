@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
 
 // ==========================================
@@ -15,7 +16,13 @@ Route::get('/', function () {
 
 Route::get('/explore', function () {
     $categories = \App\Models\Category::all();
-    return view('explore', compact('categories'));
+    $products = \App\Models\Product::with('category')
+        ->where('status', '!=', 'expired')
+        ->latest()
+        ->take(12)
+        ->get();
+
+    return view('explore', compact('categories', 'products'));
 })->name('explore');
 
 Route::get('/dashboard', function () {
@@ -42,11 +49,14 @@ Route::middleware('auth')->group(function () {
         return view('cart');
     })->name('cart');
 
+    Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+
     Route::resource('products', ProductController::class);
 
     // 5. Product Details (If you want to hide add-to-cart behind login)
     // Route::get('/product/{id}', [...]);
     Route::resource('addresses', AddressController::class);
+
 });
 
 // Breeze Auth Routes (Login, Register, etc.)

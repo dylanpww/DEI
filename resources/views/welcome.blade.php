@@ -35,10 +35,6 @@
                         My Products
                     </a>
                     @endif
-
-                    <a href="{{ url('/dashboard') }}" class="bg-crave-teal text-white px-10 py-4 rounded-full font-bold hover:bg-crave-darkgreen transition-colors shadow-lg text-lg">
-                        Go to Dashboard
-                    </a>
                 @else
                     <a href="{{ route('login') }}" class="bg-crave-teal text-white px-10 py-4 rounded-full font-bold hover:bg-crave-darkgreen transition-colors shadow-lg text-lg">
                         Log in
