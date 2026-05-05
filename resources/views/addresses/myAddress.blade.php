@@ -17,21 +17,38 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         @forelse($addresses as $address)
-            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:border-crave-lime transition-colors relative group">
-                <div class="flex justify-between items-start mb-4">
+            <div class="bg-white rounded-2xl p-6 shadow-sm border {{ session('selected_address_id') == $address->Address_ID ? 'border-crave-lime ring-2 ring-crave-lime/20' : 'border-gray-100' }} hover:border-crave-lime transition-all relative">
+                
+                <div class="flex justify-between items-start mb-4 gap-2">
                     <div class="flex items-center space-x-2">
-                        <ion-icon name="location" class="text-crave-orange text-2xl"></ion-icon>
-                        <h2 class="text-xl font-bold text-gray-800">{{ $address->name }}</h2>
+                        <ion-icon name="location" class="text-crave-orange text-2xl shrink-0"></ion-icon>
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                            <h2 class="text-lg font-bold text-gray-800 leading-tight">{{ $address->name }}</h2>
+                            @if(session('selected_address_id') == $address->Address_ID)
+                                <span class="bg-crave-lime text-crave-teal text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase w-fit">Active</span>
+                            @endif
+                        </div>
                     </div>
                     
-                    <div class="flex space-x-3 text-gray-400">
-                        <a href="{{ route('addresses.edit', $address->Address_ID) }}" class="hover:text-crave-teal transition-colors" title="Edit">
+                    <div class="flex items-center space-x-3 text-gray-400 shrink-0">
+                        @if(session('selected_address_id') != $address->Address_ID)
+                            <form action="{{ route('cart.selectAddress') }}" method="POST" class="inline">
+                                @csrf
+                                <input type="hidden" name="address_id" value="{{ $address->Address_ID }}">
+                                <button type="submit" class="text-xs bg-gray-100 text-gray-600 font-bold px-3 py-1.5 rounded-full hover:bg-crave-lime hover:text-crave-teal transition-colors">
+                                    Use This
+                                </button>
+                            </form>
+                        @endif
+
+                        <a href="{{ route('addresses.edit', $address->Address_ID) }}" class="hover:text-crave-teal transition-colors flex items-center" title="Edit Address">
                             <ion-icon name="create-outline" class="text-xl"></ion-icon>
                         </a>
-                        <form action="{{ route('addresses.destroy', $address->Address_ID) }}" method="POST" class="inline" onsubmit="return confirm('Delete this address?');">
+
+                        <form action="{{ route('addresses.destroy', $address->Address_ID) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this address?');">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="hover:text-crave-pink transition-colors" title="Delete">
+                            <button type="submit" class="hover:text-crave-pink transition-colors flex items-center" title="Delete Address">
                                 <ion-icon name="trash-outline" class="text-xl"></ion-icon>
                             </button>
                         </form>
@@ -39,19 +56,22 @@
                 </div>
 
                 <div class="text-gray-600 space-y-2 text-sm">
-                    <p class="font-medium flex items-center"><ion-icon name="call-outline" class="mr-2"></ion-icon> {{ $address->telephoneNumber }}</p>
-                    <p class="mt-2">{{ $address->completeAddress }}</p>
+                    <p class="font-medium flex items-center">
+                        <ion-icon name="call-outline" class="mr-2"></ion-icon> {{ $address->telephoneNumber }}
+                    </p>
+                    <p class="text-gray-500 leading-relaxed">
+                        {{ $address->completeAddress }}
+                    </p>
                     @if($address->notes)
-                        <p class="text-gray-400 italic mt-2 text-xs">Notes: {{ $address->notes }}</p>
+                        <p class="text-gray-400 italic text-xs mt-2 border-t pt-2">Note: {{ $address->notes }}</p>
                     @endif
                 </div>
             </div>
         @empty
-            <div class="col-span-1 md:col-span-2 bg-crave-beige/30 rounded-2xl p-10 text-center border border-dashed border-crave-orange/50">
-                <ion-icon name="map-outline" class="text-5xl text-crave-orange/50 mb-3"></ion-icon>
-                <h3 class="text-lg font-bold text-crave-brown mb-2">No addresses found</h3>
-                <p class="text-gray-500 mb-4">You haven't added any delivery addresses yet.</p>
-                <a href="{{ route('addresses.create') }}" class="text-crave-green hover:text-crave-darkgreen font-medium underline">Add one now</a>
+            <div class="col-span-full bg-gray-50 rounded-2xl p-12 text-center border-2 border-dashed border-gray-200">
+                <ion-icon name="map-outline" class="text-5xl text-gray-300 mb-3"></ion-icon>
+                <p class="text-gray-500 font-medium">No addresses found.</p>
+                <a href="{{ route('addresses.create') }}" class="text-crave-green hover:underline text-sm mt-2 inline-block">Add your first address</a>
             </div>
         @endforelse
     </div>

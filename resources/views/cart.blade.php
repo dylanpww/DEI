@@ -8,17 +8,27 @@
             <ion-icon name="cart" class="text-3xl text-crave-teal"></ion-icon>
             <h1 class="font-extrabold text-2xl text-crave-teal">My Cart</h1>
         </div>
-        
-        @if(isset($cartItems) && $cartItems->count() > 0)
-        <a href="{{ auth()->check() ? route('addresses.index') : route('login') }}" class="inline-flex items-center gap-2 rounded-full bg-crave-lime/20 px-4 py-2 text-sm font-bold text-crave-darkgreen transition-all hover:bg-crave-lime hover:text-white shadow-sm transform hover:-translate-y-0.5">
-            <ion-icon name="location-outline" class="text-lg"></ion-icon>
-            <span class="hidden sm:inline">Delivery Address</span>
-            <span class="sm:hidden">Address</span>
-        </a>
-        @endif
     </div>
 
     @if(isset($cartItems) && $cartItems->count() > 0)
+        <div class="mb-6 bg-crave-beige/20 p-4 rounded-2xl border border-crave-orange/30 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div class="flex items-start gap-3">
+                <ion-icon name="location" class="text-crave-orange text-3xl mt-1"></ion-icon>
+                <div>
+                    <h3 class="font-bold text-gray-800 text-sm mb-1">Delivery Address</h3>
+                    @if($selectedAddress)
+                        <p class="text-sm font-bold text-crave-teal">{{ $selectedAddress->name }} <span class="text-xs text-gray-500 font-normal ml-1">({{ $selectedAddress->telephoneNumber }})</span></p>
+                        <p class="text-xs text-gray-600 mt-0.5 line-clamp-1">{{ $selectedAddress->completeAddress }}</p>
+                    @else
+                        <p class="text-xs text-crave-pink font-medium mt-1">No delivery address set yet.</p>
+                    @endif
+                </div>
+            </div>
+            <a href="{{ route('addresses.index') }}" class="shrink-0 inline-flex items-center gap-1 text-crave-darkgreen hover:text-white font-bold text-sm bg-white hover:bg-crave-lime border border-crave-lime px-4 py-2 rounded-full shadow-sm transition-all">
+                {{ $selectedAddress ? 'Change Address' : 'Add Address' }}
+            </a>
+        </div>
+        
         <div class="flex-1 overflow-y-auto space-y-5 pr-2">
             @foreach($cartItems as $item)
             <div class="flex items-center justify-between bg-gray-50/50 p-4 rounded-2xl border border-gray-100 hover:border-crave-lime/50 transition-colors">

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Address;
+use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
@@ -21,8 +23,35 @@ class CartController extends Controller
             return $item->price * $item->quantity;
         });
 
+        $selectedAddress = null;
+
+        if (Auth::check()) {
+        // 1. Ambil ID dari session
+        $sessionAddressId = session()->get('selected_address_id');
+
+        if ($sessionAddressId) {
+            // Cari alamat yang ID-nya cocok dengan session DAN milik user tersebut
+            $selectedAddress = Address::where('Address_ID', $sessionAddressId)
+            ->where('user_ID', Auth::id())
+            ->first();
+        }
+
+        // 2. Jika di session tidak ada (atau alamat lama sudah dihapus), 
+        // ambil alamat yang paling baru ditambahkan (terakhir dibuat)
+        if (!$selectedAddress) {
+            $selectedAddress = Address::where('user_ID', Auth::id())
+            ->latest() // Mengambil yang paling baru
+            ->first();
+            
+            // Simpan otomatis ke session agar sinkron
+            if ($selectedAddress) {
+                session()->put('selected_address_id', $selectedAddress->Address_ID);
+            }
+        }
+    }
+
         // Kirim data ke tampilan cart.blade.php
-        return view('cart', compact('cartItems', 'totalPrice'));
+        return view('cart', compact('cartItems', 'totalPrice', 'selectedAddress'));
     }
 
     public function addToCart(Request $request)
@@ -58,6 +87,18 @@ class CartController extends Controller
         session()->put('cart', $cart);
 
         return redirect()->route('cart')->with('success', 'Barang berhasil ditambahkan!');
+    }
+
+    public function selectAddress(Request $request)
+    {
+        $request->validate([
+            'address_id' => 'required|exists:addresses,Address_ID'
+        ]);
+
+        // Simpan pilihan ke session
+        session()->put('selected_address_id', $request->address_id);
+
+        return redirect()->route('cart')->with('success', 'Delivery address updated!');
     }
 
     public function increase(Request $request)

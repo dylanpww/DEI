@@ -51,13 +51,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/cart/increase', [CartController::class, 'increase'])->name('cart.increase');
     Route::post('/cart/decrease', [CartController::class, 'decrease'])->name('cart.decrease');
     Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
+    Route::post('/cart/select-address', [CartController::class, 'selectAddress'])->name('cart.selectAddress');
 
     Route::resource('products', ProductController::class);
 
     // 5. Product Details (If you want to hide add-to-cart behind login)
     // Route::get('/product/{id}', [...]);
     Route::resource('addresses', AddressController::class);
-
+    Route::delete('/addresses/{id}', [AddressController::class, 'destroy'])->name('addresses.destroy');
 });
 
 // Breeze Auth Routes (Login, Register, etc.)
