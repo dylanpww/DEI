@@ -23,16 +23,7 @@ class ProductSeeder extends Seeder
         }
 
         $seller = User::query()->where('role', 'seller')->first();
-
-        if (!$seller) {
-            $seller = User::create([
-                'username' => 'Crave Partner Resto',
-                'email' => 'partner@crave.test',
-                'password' => Hash::make('password'),
-                'role' => 'seller',
-            ]);
-        }
-
+        
         $products = [
             [
                 'user_id' => $seller->user_ID,

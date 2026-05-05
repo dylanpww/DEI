@@ -22,5 +22,13 @@ class UserSeeder extends Seeder
                 'role' => 'admin',
             ]
         );
+        User::updateOrCreate(
+            ['email' => 'partner@crave'],
+            [
+                'username' => 'Crave Partner Resto',
+                'password' => Hash::make('password'),
+                'role' => 'seller',
+            ]
+        );
     }
 }
