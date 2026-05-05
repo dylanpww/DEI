@@ -3,14 +3,25 @@
 @section('content')
 <div class="bg-white rounded-3xl shadow-sm p-8 h-full min-h-[80vh]">
     
+    <div class="mb-12">
+        <h2 class="text-gray-400 font-bold text-sm uppercase tracking-widest mb-1">Welcome, {{ auth()->user()->username }}!</h2>
+        <h1 class="font-black text-4xl text-crave-teal">
+            @if(auth()->user()->role === 'seller')
+                Your Shop Dashboard is Ready 🌿
+            @else
+                Discover Fresh Deals 🌿
+            @endif
+        </h1>
+    </div>
+
     <div class="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-6">
         <div class="flex items-center gap-4 flex-wrap">
-            <h1 class="font-bold text-3xl text-crave-teal">Explore Categories</h1>
+            <h1 class="font-bold text-2xl text-crave-teal">Explore Categories</h1>
 
-            @if(auth()->check() && (Auth::user()->role === 'vendor' || Auth::user()->role === 'admin'))
-            <a href="{{ route('products.index') }}" class="inline-flex items-center gap-2 rounded-full bg-crave-lime px-5 py-3 text-sm font-bold text-crave-teal shadow-sm transition-colors hover:bg-crave-green">
-                <ion-icon name="pricetag-outline"></ion-icon>
-                Products
+            @if(auth()->check() && (Auth::user()->role === 'seller' || Auth::user()->role === 'admin'))
+            <a href="{{ route('products.index') }}" class="inline-flex items-center gap-2 rounded-full bg-crave-teal px-6 py-3 text-sm font-bold text-white shadow-lg transition-all hover:bg-crave-darkgreen hover:scale-105">
+                <ion-icon name="storefront-outline"></ion-icon>
+                Go to My Shop
             </a>
             @endif
         </div>

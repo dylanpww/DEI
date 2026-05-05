@@ -30,7 +30,7 @@
 
             @if (Route::has('login'))
                 @auth
-                    @if(Auth::user()->role === 'vendor' || Auth::user()->role === 'admin')
+                    @if(Auth::user()->role === 'seller' || Auth::user()->role === 'admin')
                     <a href="{{ route('products.index') }}" class="bg-crave-lime text-crave-teal px-10 py-4 rounded-full font-bold hover:bg-crave-green transition-colors shadow-lg text-lg">
                         My Products
                     </a>

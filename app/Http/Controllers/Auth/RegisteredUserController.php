@@ -49,6 +49,11 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('explore', absolute: false));
+        // Redirect based on role
+        if ($user->role === 'seller') {
+            return redirect()->route('products.index');
+        }
+
+        return redirect()->route('explore');
     }
 }
