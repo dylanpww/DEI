@@ -1,52 +1,78 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
+@extends('layouts.app')
+
+@section('content')
+<div class="h-full flex flex-col items-center justify-center p-6 bg-white">
+    
+    <!-- Header -->
+    <div class="w-full mb-8">
+        <h1 class="text-3xl font-bold text-crave-teal mb-2">Sign Up</h1>
+        <p class="text-gray-500 text-sm">Enter your credentials to continue</p>
+    </div>
+
+    <!-- Error Messages (If validation fails) -->
+    @if ($errors->any())
+        <div class="w-full bg-red-50 text-red-500 text-sm p-3 rounded-xl mb-4 border border-red-100">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>• {{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <!-- Registration Form -->
+    <form method="POST" action="{{ route('register') }}" class="w-full space-y-5">
         @csrf
 
-        <!-- Name -->
+        <!-- Username Input -->
         <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+            <label class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+            <input type="text" name="username" value="{{ old('username') }}" required autofocus class="w-full border-b border-gray-300 py-2 outline-none focus:border-crave-lime transition-colors text-crave-teal">
         </div>
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        <!-- Email Input -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <input type="email" name="email" value="{{ old('email') }}" required class="w-full border-b border-gray-300 py-2 outline-none focus:border-crave-lime transition-colors text-crave-teal">
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        <!-- Role Selection -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">I want to...</label>
+            <select name="role" required class="w-full border-b border-gray-300 py-2 outline-none focus:border-crave-lime transition-colors text-crave-teal bg-transparent">
+                <option value="" disabled selected>Select an option</option>
+                <option value="user">Buy rescued food (User)</option>
+                <option value="seller">Sell surplus food (Restaurant/Seller)</option>
+            </select>
         </div>
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+        <!-- Password Input -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <input type="password" name="password" required class="w-full border-b border-gray-300 py-2 outline-none focus:border-crave-lime transition-colors text-crave-teal">
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
+        <!-- Confirm Password Input -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+            <input type="password" name="password_confirmation" required class="w-full border-b border-gray-300 py-2 outline-none focus:border-crave-lime transition-colors text-crave-teal">
+        </div>
 
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
+        <div class="pt-4">
+            <p class="text-xs text-gray-400 text-center mb-6">
+                By continuing you agree to our <a href="#" class="text-crave-lime hover:underline">Terms of Service</a> and <a href="#" class="text-crave-lime hover:underline">Privacy Policy</a>.
+            </p>
+
+            <button type="submit" class="w-full bg-crave-lime text-white font-bold text-lg py-4 rounded-full shadow-lg hover:bg-crave-green transition-colors">
+                Sign Up
+            </button>
         </div>
     </form>
-</x-guest-layout>
+
+    <div class="mt-6 text-sm text-center">
+        <span class="text-gray-500">Already have an account?</span> 
+        <a href="{{ route('login') }}" class="text-crave-lime font-bold hover:underline">Log In</a>
+    </div>
+
+</div>
+@endsection
