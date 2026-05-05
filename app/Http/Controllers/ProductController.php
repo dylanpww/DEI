@@ -46,7 +46,13 @@ class ProductController extends Controller
             'discount' => 'numeric|min:0',
             'stock' => 'required|integer|min:0',
             'status' => 'required|in:available,sold_out,expired',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('products', 'public');
+        }
 
         Product::create([
             'user_id' => Auth::id(), // Assign ke user yang sedang login
@@ -56,6 +62,7 @@ class ProductController extends Controller
             'discount' => $request->discount ?? 0,
             'stock' => $request->stock,
             'status' => $request->status,
+            'image' => $imagePath,
         ]);
 
         return redirect()->route('products.index')->with('success', 'Product added successfully!');
@@ -97,10 +104,17 @@ class ProductController extends Controller
             'discount' => 'numeric|min:0',
             'stock' => 'required|integer|min:0',
             'status' => 'required|in:available,sold_out,expired',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $product = Product::findOrFail($id);
-        $product->update($request->all());
+        
+        $data = $request->all();
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('products', 'public');
+        }
+        
+        $product->update($data);
 
         return redirect()->route('products.index')->with('success', 'Product updated successfully!');
     }

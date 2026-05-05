@@ -9,7 +9,7 @@
         <h2 class="text-2xl font-extrabold text-crave-teal">Edit Product: {{ $product->name }}</h2>
     </div>
 
-    <form action="{{ route('products.update', $product->product_ID) }}" method="POST" class="space-y-6">
+    <form action="{{ route('products.update', $product->product_ID) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
         @csrf
         @method('PUT')
         <div>
@@ -36,6 +36,19 @@
                     <option value="expired" {{ $product->status == 'expired' ? 'selected' : '' }}>Expired</option>
                 </select>
             </div>
+        </div>
+        @if($product->image)
+        <div>
+            <label class="block text-sm font-bold text-gray-700 mb-2">Current Image</label>
+            <div class="w-32 h-32 rounded-lg overflow-hidden bg-crave-beige flex items-center justify-center">
+                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+            </div>
+        </div>
+        @endif
+        <div>
+            <label class="block text-sm font-bold text-gray-700 mb-2">Update Product Image (Optional)</label>
+            <input type="file" name="image" accept="image/*" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-crave-lime">
+            <p class="text-xs text-gray-500 mt-2">Accepted formats: JPEG, PNG, JPG, GIF (Max 2MB)</p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>

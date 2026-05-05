@@ -17,7 +17,8 @@ class Product extends Model
         'actualPrice', 
         'discount', 
         'stock', 
-        'status'
+        'status',
+        'image'
     ];
 
     public function category()

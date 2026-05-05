@@ -21,6 +21,7 @@
         <table class="w-full text-left border-collapse">
             <thead>
                 <tr class="bg-gray-50 text-gray-600 text-sm uppercase tracking-wider">
+                    <th class="p-4 border-b">Image</th>
                     <th class="p-4 border-b">Name</th>
                     <th class="p-4 border-b">Category</th>
                     <th class="p-4 border-b">Price</th>
@@ -34,6 +35,15 @@
             <tbody class="text-gray-700">
                 @forelse($products as $product)
                 <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="p-4 border-b">
+                        <div class="w-12 h-12 rounded-lg overflow-hidden bg-crave-beige flex items-center justify-center">
+                            @if($product->image)
+                                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                            @else
+                                <ion-icon name="image-outline" class="text-gray-300 text-xl"></ion-icon>
+                            @endif
+                        </div>
+                    </td>
                     <td class="p-4 border-b font-medium">{{ $product->name }}</td>
                     <td class="p-4 border-b">{{ $product->category->name }}</td>
                     <td class="p-4 border-b">
@@ -68,7 +78,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="{{ $isVendor ? '6' : '5' }}" class="p-4 text-center text-gray-500">No products found. Start saving food!</td>
+                    <td colspan="{{ $isVendor ? '7' : '6' }}" class="p-4 text-center text-gray-500">No products found. Start saving food!</td>
                 </tr>
                 @endforelse
             </tbody>
