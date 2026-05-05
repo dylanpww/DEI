@@ -26,12 +26,6 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Makanan', 'description' => 'Kategori untuk semua jenis makanan.'],
             ['name' => 'Minuman', 'description' => 'Kategori untuk semua jenis minuman.'],
         ];
-
-        User::factory()->create([
-            'username' => 'Test User',
-            'email' => 'test@example.com',
-            'role' => 'user',
-        ]);
         foreach ($categories as $category) {
             Category::updateOrCreate(
                 ['name' => $category['name']],
