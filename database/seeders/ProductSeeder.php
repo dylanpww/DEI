@@ -42,7 +42,7 @@ class ProductSeeder extends Seeder
                 'discount' => 10000.00,
                 'stock' => 5,
                 'status' => 'available',
-                'image' => 'makanan/makan.jpg'
+                'image' => 'products/makan.png'
             ],
             [
                 'user_id' => $seller->user_ID,
@@ -52,7 +52,7 @@ class ProductSeeder extends Seeder
                 'discount' => 10000.00,
                 'stock' => 3,
                 'status' => 'available',
-                'image' => 'makanan/makan.jpg'
+                'image' => 'products/makan.png'
             ],
             [
                 'user_id' => $seller->user_ID,
@@ -62,7 +62,7 @@ class ProductSeeder extends Seeder
                 'discount' => 12000.00,
                 'stock' => 8,
                 'status' => 'available',
-                'image' => 'makanan/makan.jpg'
+                'image' => 'products/makan.png'
             ],
 
             // --- DRINKS (MINUMAN) ---
@@ -74,7 +74,7 @@ class ProductSeeder extends Seeder
                 'discount' => 5000.00,
                 'stock' => 10,
                 'status' => 'available',
-                'image' => 'makanan/makan.jpg'
+                'image' => 'products/makan.png'
             ],
             [
                 'user_id' => $seller->user_ID,
@@ -84,7 +84,7 @@ class ProductSeeder extends Seeder
                 'discount' => 7000.00,
                 'stock' => 15,
                 'status' => 'available',
-                'image' => 'makanan/makan.jpg'
+                'image' => 'products/makan.png'
             ],
             [
                 'user_id' => $seller->user_ID,
@@ -94,7 +94,7 @@ class ProductSeeder extends Seeder
                 'discount' => 6000.00,
                 'stock' => 5,
                 'status' => 'available',
-                'image' => 'makanan/makan.jpg'
+                'image' => 'products/makan.png'
             ],
             [
                 'user_id' => $seller->user_ID,
@@ -104,7 +104,7 @@ class ProductSeeder extends Seeder
                 'discount' => 4000.00,
                 'stock' => 20,
                 'status' => 'available',
-                'image' => 'makanan/makan.jpg'
+                'image' => 'products/makan.png'
             ],
             [
                 'user_id' => $seller->user_ID,
@@ -114,7 +114,7 @@ class ProductSeeder extends Seeder
                 'discount' => 10000.00,
                 'stock' => 8,
                 'status' => 'available',
-                'image' => 'makanan/makan.jpg'
+                'image' => 'products/makan.png'
             ],
         ];
 
