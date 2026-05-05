@@ -37,10 +37,11 @@
                 <tr class="hover:bg-gray-50 transition-colors">
                     <td class="p-4 border-b">
                         <div class="w-12 h-12 rounded-lg overflow-hidden bg-crave-beige flex items-center justify-center">
-                            @if($product->image)
+                            @php $stored = $product->image && file_exists(storage_path('app/public/' . $product->image)); @endphp
+                            @if($stored)
                                 <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
                             @else
-                                <ion-icon name="image-outline" class="text-gray-300 text-xl"></ion-icon>
+                                <img src="{{ asset('images/placeholder.svg') }}" alt="No image" class="w-8 h-8 object-contain">
                             @endif
                         </div>
                     </td>
