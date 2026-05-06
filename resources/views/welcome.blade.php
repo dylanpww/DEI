@@ -40,15 +40,14 @@
                         </a>
                     @endif
                 @endauth
-            @endif
+            </div>
         </div>
-    </div>
 
-    <!-- Mascot 1 -->
-    <div class="z-10 mt-12 lg:mt-0 w-full lg:w-1/2 flex justify-center lg:justify-end">
-        <img src="{{ asset('images/mascot-1.png') }}" alt="Crave Mascot"
-            class="max-w-xs md:max-w-md lg:max-w-lg object-contain drop-shadow-2xl animate-bounce-slow">
-    </div>
+        <!-- Mascot 1 -->
+        <div class="z-10 mt-12 lg:mt-0 w-full lg:w-1/2 flex justify-center lg:justify-end">
+            <img src="{{ asset('images/mascot-1.png') }}" alt="Crave Mascot"
+                class="max-w-xs md:max-w-md lg:max-w-lg object-contain drop-shadow-2xl animate-bounce-slow">
+        </div>
     </div>
 
     <!-- How it Works Section -->
@@ -73,15 +72,23 @@
         </div>
     </div>
 
-<style>
-    @keyframes bounce-slow {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-15px); }
-    }
-    .animate-bounce-slow {
-        animation: bounce-slow 4s ease-in-out infinite;
-    }
-</style>
+    <style>
+        @keyframes bounce-slow {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        .animate-bounce-slow {
+            animation: bounce-slow 4s ease-in-out infinite;
+        }
+    </style>
 
 
 @endsection
