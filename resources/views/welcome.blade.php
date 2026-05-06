@@ -38,23 +38,9 @@
                             class="bg-crave-teal text-white px-10 py-4 rounded-full font-bold hover:bg-crave-darkgreen transition-colors shadow-lg text-lg text-center">
                             Log in
                         </a>
-
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}"
-                                class="bg-white text-crave-teal border-2 border-crave-teal px-10 py-4 rounded-full font-bold hover:bg-gray-50 transition-colors shadow-lg text-lg text-center">
-                                Register
-                            </a>
-
-                            @if (Route::has('register'))
-                                <a href="{{ route('register') }}"
-                                    class="bg-white text-crave-teal border-2 border-crave-teal px-10 py-4 rounded-full font-bold hover:bg-gray-50 transition-colors shadow-lg text-lg">
-                                    Register
-                                </a>
-                            @endif
-                        @endauth
                     @endif
-                @endif
-            </div>
+                @endauth
+            @endif
         </div>
     </div>
 
@@ -87,21 +73,15 @@
         </div>
     </div>
 
-    <style>
-        @keyframes bounce-slow {
+<style>
+    @keyframes bounce-slow {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+    }
+    .animate-bounce-slow {
+        animation: bounce-slow 4s ease-in-out infinite;
+    }
+</style>
 
-            0%,
-            100% {
-                transform: translateY(0);
-            }
 
-            50% {
-                transform: translateY(-15px);
-            }
-        }
-
-        .animate-bounce-slow {
-            animation: bounce-slow 4s ease-in-out infinite;
-        }
-    </style>
 @endsection
