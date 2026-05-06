@@ -60,22 +60,18 @@
                 <nav class="hidden md:flex space-x-10 text-gray-600 font-medium text-lg">
                     <a href="{{ route('explore') }}" class="{{ request()->is('explore') ? 'text-crave-darkgreen border-b-2 border-crave-lime' : 'hover:text-crave-lime' }} transition-colors pb-1">Explore</a>
                     <a href="{{ route('cart') }}" class="{{ request()->is('cart') ? 'text-crave-darkgreen border-b-2 border-crave-lime' : 'hover:text-crave-lime' }} transition-colors pb-1 flex items-center">Cart
-    @php
-        // Mengambil semua 'quantity' dari tiap item di session cart dan menjumlahkannya
-        $totalQty = array_sum(array_column(session('cart', []), 'quantity'));
-    @endphp
-    @if($totalQty > 0)
-        <span class="ml-2 bg-crave-pink text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-            {{ $totalQty }}
-        </span>
-    @endif
-</a>
-@auth
-        <a href="{{ route('my-transactions') }}" 
-   class="{{ request()->routeIs('my-transactions') ? 'text-crave-darkgreen border-b-2 border-crave-lime' : 'hover:text-crave-lime' }} transition-colors pb-1">
-    My Transactions
-</a>
-    @endauth
+                        @php
+                            $totalQty = array_sum(array_column(session('cart', []), 'quantity'));
+                        @endphp
+                        @if($totalQty > 0)
+                            <span class="ml-2 bg-crave-pink text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                                {{ $totalQty }}
+                            </span>
+                        @endif
+                    </a>
+                    @auth
+                    <a href="{{ route('my-transactions') }}" class="{{ request()->routeIs('my-transactions') ? 'text-crave-darkgreen border-b-2 border-crave-lime' : 'hover:text-crave-lime' }} transition-colors pb-1">My Transactions</a>
+                    @endauth
                     @if(auth()->check() && (Auth::user()->role === 'seller' || Auth::user()->role === 'admin'))
                     <a href="{{ route('products.index') }}" class="{{ request()->is('products*') ? 'text-crave-darkgreen border-b-2 border-crave-lime' : 'hover:text-crave-lime' }} transition-colors pb-1">My Shop</a>
                     @endif
@@ -104,70 +100,32 @@
                             </a>
                             <div class="border-t border-gray-100"></div>
                             @endif
-                        </a>
-                        @auth
-                            <a href="{{ route('my-transactions') }}"
-                                class="{{ request()->routeIs('my-transactions') ? 'text-crave-darkgreen border-b-2 border-crave-lime' : 'hover:text-crave-lime' }} transition-colors pb-1">
-                                My Transactions
+                            <a href="{{ route('profile.show') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-crave-teal {{ Auth::user()->role !== 'admin' ? 'rounded-t-lg' : '' }}">
+                                👤 My Profile
                             </a>
-                        @endauth
-                        @if (auth()->check() && (Auth::user()->role === 'seller' || Auth::user()->role === 'admin'))
-                            <a href="{{ route('products.index') }}"
-                                class="{{ request()->is('products*') ? 'text-crave-darkgreen border-b-2 border-crave-lime' : 'hover:text-crave-lime' }} transition-colors pb-1">My
-                                Shop</a>
-                        @endif
-                    </nav>
-
-                    <!-- User Profile / Actions -->
-                    <div class="flex items-center space-x-6 text-gray-500 text-2xl">
-                        <button class="hover:text-crave-pink transition-colors"><ion-icon
-                                name="heart-outline"></ion-icon></button>
-
-                        @auth
-                            <!-- User Dropdown Menu -->
-                            <div class="relative group">
-                                <button class="hover:text-crave-teal transition-colors flex items-center gap-2">
-                                    <ion-icon name="person-circle-outline"></ion-icon>
-                                    <span class="text-sm font-medium">{{ auth()->user()->username }}</span>
+                            <a href="{{ route('profile.edit') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-crave-teal">
+                                ⚙️ Edit Profile
+                            </a>
+                            <a href="#" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-crave-teal">
+                                📦 My Orders
+                            </a>
+                            
+                            <div class="border-t border-gray-100"></div>
+                            <form method="POST" action="{{ route('logout') }}" class="block m-0">
+                                @csrf
+                                <button type="submit" class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-b-lg transition-colors">
+                                    🚪 Logout
                                 </button>
-
-                                <!-- Dropdown panel -->
-                                <div
-                                    class="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-100 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                                    <!-- invisible bridge to prevent losing hover -->
-                                    <div class="absolute -top-4 left-0 w-full h-4"></div>
-
-                                    <a href="{{ route('profile.show') }}"
-                                        class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-crave-teal rounded-t-lg">
-                                        👤 My Profile
-                                    </a>
-                                    <a href="{{ route('profile.edit') }}"
-                                        class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-crave-teal">
-                                        ⚙️ Edit Profile
-                                    </a>
-                                    <a href="#"
-                                        class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-crave-teal">
-                                        📦 My Orders
-                                    </a>
-
-                                    <div class="border-t border-gray-100"></div>
-                                    <form method="POST" action="{{ route('logout') }}" class="block m-0">
-                                        @csrf
-                                        <button type="submit"
-                                            class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-b-lg transition-colors">
-                                            🚪 Logout
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        @else
-                            <a href="{{ route('login') }}" class="hover:text-crave-teal transition-colors"><ion-icon
-                                    name="person-circle-outline"></ion-icon></a>
-                        @endauth
+                            </form>
+                        </div>
                     </div>
+                    @else
+                    <a href="{{ route('login') }}" class="hover:text-crave-teal transition-colors"><ion-icon name="person-circle-outline"></ion-icon></a>
+                    @endauth
                 </div>
             </div>
-        </header>
+        </div>
+    </header>
     @endif
 
     <!-- Main Content Container -->
