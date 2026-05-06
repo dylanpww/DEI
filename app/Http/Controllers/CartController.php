@@ -152,23 +152,23 @@ class CartController extends Controller
     DB::beginTransaction();
 
     try {
-        // 1. Hitung total (sesuaikan dengan tampilan kamu yang ada biaya ongkir 10.000)
         $subtotal = collect($cart)->sum(function($item) {
             return $item['price'] * $item['quantity'];
         });
         $deliveryFee = 10000;
         $totalPrice = $subtotal + $deliveryFee;
 
-        // 2. Buat data Order
+        // 1. Buat data Order
         $order = Order::create([
             'user_id'    => Auth::user()->user_ID,
             'address_ID' => $addressId,
             'totalPrice' => $totalPrice,
-            'status'     => 'success', // UBAH DARI 'pending' MENJADI 'success'
+            'status'     => 'success',
         ]);
 
-        // 3. Simpan item-itemnya
+        // 2. Simpan item dan kurangi stok
         foreach ($cart as $id => $details) {
+            // Buat record item pesanan
             OrderItem::create([
                 'order_id'   => $order->order_id,
                 'product_id' => $id,
@@ -176,22 +176,27 @@ class CartController extends Controller
                 'subTotal'   => $details['price'] * $details['quantity'],
             ]);
 
-            // OPSIONAL: Kurangi stok produk di sini jika perlu
-            // $product = Product::find($id);
-            // $product->decrement('stock', $details['quantity']);
+            // --- PROSES PENGURANGAN STOK ---
+            $product = Product::findOrFail($id);
+            
+            // Opsional: Cek jika stok cukup sebelum dikurangi
+            if ($product->stock < $details['quantity']) {
+                throw new \Exception("Maaf, stok untuk {$product->name} tidak mencukupi.");
+            }
+
+            $product->decrement('stock', $details['quantity']);
+            // -------------------------------
         }
 
         DB::commit();
 
-        // 4. Bersihkan session
         session()->forget(['cart', 'selected_address_id']);
 
-        // 5. Redirect ke halaman transaksi (my-transactions) dengan pesan sukses
         return redirect()->route('my-transactions')->with('success', 'Payment successful! Your order is being processed.');
 
     } catch (\Exception $e) {
         DB::rollBack();
-        return redirect()->back()->with('error', 'Failed to process payment: ' . $e->getMessage());
+        return redirect()->route('cart')->with('error', 'Gagal memproses pesanan: ' . $e->getMessage());
     }
 }
 
