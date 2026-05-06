@@ -1,10 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="h-full flex flex-col items-center justify-center p-6 bg-white">
+<div class="h-full flex flex-col items-center justify-center p-6 min-h-[80vh] relative z-10 mb-12">
+    <div class="bg-white/95 backdrop-blur-md p-8 md:p-10 rounded-3xl shadow-xl w-full max-w-md border border-gray-100 flex flex-col items-center">
     
-    <!-- Header -->
-    <div class="w-full mb-8">
+    <!-- Mascot & Header -->
+    <div class="w-full mb-8 flex flex-col items-center text-center">
+        <!-- Mascot Greeting -->
+        <img src="{{ asset('images/mascot-1.png') }}" alt="Crave Mascot" class="h-32 object-contain mb-4 drop-shadow-md">
+        
         <h1 class="text-3xl font-bold text-crave-teal mb-2">Sign Up</h1>
         <p class="text-gray-500 text-sm">Enter your credentials to continue</p>
     </div>
@@ -74,5 +78,6 @@
         <a href="{{ route('login') }}" class="text-crave-lime font-bold hover:underline">Log In</a>
     </div>
 
+    </div>
 </div>
 @endsection

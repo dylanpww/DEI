@@ -40,7 +40,9 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
 </head>
-<body class="bg-gray-50 flex flex-col min-h-screen font-sans">
+<body class="bg-gray-50 flex flex-col min-h-screen font-sans relative z-0">
+    <!-- Global Light Pattern Background -->
+    <div class="fixed inset-0 opacity-40 pointer-events-none z-[-1]" style="background-image: url('{{ asset('images/pattern-light.png') }}'); background-position: center; background-size: cover; background-repeat: no-repeat;"></div>
 
     <!-- Top Navigation Bar (Desktop) -->
     @if(!request()->is('/') && !request()->is('login') && !request()->is('register'))
@@ -49,8 +51,8 @@
             <div class="flex justify-between items-center h-20">
                 
                 <!-- Logo -->
-                <a href="{{ route('welcome') }}" class="flex items-center text-crave-lime font-extrabold text-3xl">
-                    <ion-icon name="leaf" class="mr-2"></ion-icon> Crave
+                <a href="{{ route('welcome') }}" class="flex items-center">
+                    <img src="{{ asset('images/logo-text.png') }}" alt="Crave Logo" class="h-10 object-contain">
                 </a>
 
                 <!-- Desktop Menu -->
@@ -145,9 +147,17 @@
 
     <!-- Simple Footer -->
     @if(!request()->is('/') && !request()->is('login') && !request()->is('register'))
-    <footer class="bg-white border-t border-gray-200 py-8 mt-12">
-        <div class="max-w-7xl mx-auto px-4 text-center text-gray-500 text-sm">
-            &copy; {{ date('Y') }} Crave. Saving the planet, one meal at a time.
+    <footer class="mt-auto bg-crave-darkgreen relative overflow-hidden text-white">
+        <!-- Dark Pattern Background -->
+        <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: url('{{ asset('images/pattern-dark.png') }}'); background-position: center; background-size: cover; background-repeat: no-repeat;"></div>
+        
+        <div class="relative z-10 max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-center gap-6 text-lg font-medium">
+            <div class="flex items-center gap-3">
+                <img src="{{ asset('images/logo-icon.png') }}" alt="Crave Icon" class="h-10 rounded-xl bg-white shadow-sm p-1">
+                <span class="text-3xl font-extrabold tracking-tight">Crave</span>
+            </div>
+            <div class="hidden md:block w-px h-8 bg-white/30"></div>
+            <p>&copy; {{ date('Y') }} Crave. Saving the planet, one meal at a time.</p>
         </div>
     </footer>
     @endif
