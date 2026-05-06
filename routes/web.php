@@ -4,6 +4,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 
 // ==========================================
@@ -61,6 +63,12 @@ Route::middleware('auth')->group(function () {
     // Route::get('/product/{id}', [...]);
     Route::resource('addresses', AddressController::class);
     Route::delete('/addresses/{id}', [AddressController::class, 'destroy'])->name('addresses.destroy');
+
+    Route::get('/reviews/create/{product_id}', [ReviewController::class, 'create'])->name('reviews.create');
+    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::get('/reviews/product/{product_id}', [ReviewController::class, 'show'])->name('reviews.show');
+
+    Route::get('/my-transactions', [OrderController::class, 'index'])->name('my-transactions');
 });
 
 // Breeze Auth Routes (Login, Register, etc.)

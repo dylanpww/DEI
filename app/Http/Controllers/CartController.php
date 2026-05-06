@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Address;
+use App\Models\Order;
+use App\Models\OrderItem;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
@@ -137,18 +140,60 @@ class CartController extends Controller
         return view('checkout', compact('cartItems', 'totalPrice', 'selectedAddress'));
     }
 
-    public function process(\Illuminate\Http\Request $request)
-    {
-        // 1. (Opsional) Di sinilah biasanya Anda menyimpan data pesanan (Order) ke Database
-        // $paymentMethod = $request->input('payment_method');
-        // Order::create([...]);
+    public function process(Request $request)
+{
+    $cart = session()->get('cart', []);
+    $addressId = session()->get('selected_address_id');
 
-        // 2. Kosongkan keranjang belanja karena sudah dibayar
-        session()->forget('cart');
-        
-        // 3. Arahkan kembali ke halaman Home dengan pesan sukses
-        return redirect()->route('home')->with('success', 'Payment successful! Thank you for your order.');
+    if (empty($cart) || !$addressId) {
+        return redirect()->route('cart')->with('error', 'Cart is empty or address not selected.');
     }
+
+    DB::beginTransaction();
+
+    try {
+        // 1. Hitung total (sesuaikan dengan tampilan kamu yang ada biaya ongkir 10.000)
+        $subtotal = collect($cart)->sum(function($item) {
+            return $item['price'] * $item['quantity'];
+        });
+        $deliveryFee = 10000;
+        $totalPrice = $subtotal + $deliveryFee;
+
+        // 2. Buat data Order
+        $order = Order::create([
+            'user_id'    => Auth::user()->user_ID,
+            'address_ID' => $addressId,
+            'totalPrice' => $totalPrice,
+            'status'     => 'success', // UBAH DARI 'pending' MENJADI 'success'
+        ]);
+
+        // 3. Simpan item-itemnya
+        foreach ($cart as $id => $details) {
+            OrderItem::create([
+                'order_id'   => $order->order_id,
+                'product_id' => $id,
+                'qty'        => $details['quantity'],
+                'subTotal'   => $details['price'] * $details['quantity'],
+            ]);
+
+            // OPSIONAL: Kurangi stok produk di sini jika perlu
+            // $product = Product::find($id);
+            // $product->decrement('stock', $details['quantity']);
+        }
+
+        DB::commit();
+
+        // 4. Bersihkan session
+        session()->forget(['cart', 'selected_address_id']);
+
+        // 5. Redirect ke halaman transaksi (my-transactions) dengan pesan sukses
+        return redirect()->route('my-transactions')->with('success', 'Payment successful! Your order is being processed.');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->back()->with('error', 'Failed to process payment: ' . $e->getMessage());
+    }
+}
 
     public function increase(Request $request)
     {
