@@ -1,14 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="h-full flex flex-col items-center justify-center p-6 bg-white min-h-[80vh]">
+<div class="h-full flex flex-col items-center justify-center p-6 min-h-[80vh] relative z-10 mb-12">
+    <div class="bg-white/95 backdrop-blur-md p-8 md:p-10 rounded-3xl shadow-xl w-full max-w-md border border-gray-100 flex flex-col items-center">
     
     <!-- Logo & Header -->
-    <div class="w-full mb-10 flex flex-col items-center">
-        <!-- Optional: Small Logo -->
-        <div class="text-crave-lime font-extrabold text-3xl mb-6 flex items-center">
-            <ion-icon name="leaf" class="mr-2"></ion-icon> Crave
-        </div>
+    <div class="w-full mb-8 flex flex-col items-center text-center">
+        <!-- Mascot Greeting -->
+        <img src="{{ asset('images/mascot-1.png') }}" alt="Crave Mascot" class="h-32 object-contain mb-4 drop-shadow-md">
         
         <div class="w-full">
             <h1 class="text-3xl font-bold text-crave-teal mb-2">Log In</h1>
@@ -83,5 +82,6 @@
         <a href="{{ route('register') }}" class="text-crave-lime font-bold hover:underline">Sign Up</a>
     </div>
 
+    </div>
 </div>
 @endsection
