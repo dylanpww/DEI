@@ -25,7 +25,7 @@ Route::get('/explore', function () {
         ->get();
 
     return view('explore', compact('categories', 'products'));
-})->name('explore')->middleware('auth');
+})->name('explore');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -87,4 +87,4 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 });
 
 // Breeze Auth Routes (Login, Register, etc.)
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

@@ -38,9 +38,16 @@
                         <a href="{{ route('register') }}" class="bg-white text-crave-teal border-2 border-crave-teal px-10 py-4 rounded-full font-bold hover:bg-gray-50 transition-colors shadow-lg text-lg text-center">
                             Register
                         </a>
-                    @endif
-                @endauth
-            @endif
+
+                        @if (Route::has('register'))
+                            <a href="{{ route('register') }}"
+                                class="bg-white text-crave-teal border-2 border-crave-teal px-10 py-4 rounded-full font-bold hover:bg-gray-50 transition-colors shadow-lg text-lg">
+                                Register
+                            </a>
+                        @endif
+                    @endauth
+                @endif
+            </div>
         </div>
     </div>
     
