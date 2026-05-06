@@ -71,5 +71,20 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-transactions', [OrderController::class, 'index'])->name('my-transactions');
 });
 
+// ==========================================
+// ADMIN ROUTES
+// ==========================================
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\AdminController::class, 'dashboard'])->name('dashboard');
+    Route::post('/users/{id}/warn', [\App\Http\Controllers\AdminController::class, 'warnUser'])->name('users.warn');
+    Route::post('/users/{id}/block', [\App\Http\Controllers\AdminController::class, 'blockUser'])->name('users.block');
+    Route::post('/users/{id}/ban', [\App\Http\Controllers\AdminController::class, 'banUser'])->name('users.ban');
+    Route::post('/users/{id}/unblock', [\App\Http\Controllers\AdminController::class, 'unblockUser'])->name('users.unblock');
+    Route::delete('/users/{id}', [\App\Http\Controllers\AdminController::class, 'deleteUser'])->name('users.delete');
+    
+    Route::put('/reviews/{id}', [\App\Http\Controllers\AdminController::class, 'updateReview'])->name('reviews.update');
+    Route::delete('/reviews/{id}', [\App\Http\Controllers\AdminController::class, 'deleteReview'])->name('reviews.delete');
+});
+
 // Breeze Auth Routes (Login, Register, etc.)
 require __DIR__.'/auth.php';

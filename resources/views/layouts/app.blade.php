@@ -95,7 +95,13 @@
                             <!-- invisible bridge to prevent losing hover -->
                             <div class="absolute -top-4 left-0 w-full h-4"></div>
                             
-                            <a href="{{ route('profile.show') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-crave-teal rounded-t-lg">
+                            @if(Auth::user()->role === 'admin')
+                            <a href="{{ route('admin.dashboard') }}" class="block px-4 py-3 text-sm font-bold text-crave-teal bg-crave-lime/10 hover:bg-crave-lime/20 rounded-t-lg">
+                                🛡️ Admin Dashboard
+                            </a>
+                            <div class="border-t border-gray-100"></div>
+                            @endif
+                            <a href="{{ route('profile.show') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-crave-teal {{ Auth::user()->role !== 'admin' ? 'rounded-t-lg' : '' }}">
                                 👤 My Profile
                             </a>
                             <a href="{{ route('profile.edit') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-crave-teal">
