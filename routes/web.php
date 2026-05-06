@@ -25,7 +25,7 @@ Route::get('/explore', function () {
         ->get();
 
     return view('explore', compact('categories', 'products'));
-})->name('explore');
+})->name('explore')->middleware('auth');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
