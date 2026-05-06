@@ -30,5 +30,13 @@ class UserSeeder extends Seeder
                 'role' => 'seller',
             ]
         );
+        User::updateOrCreate(
+            ['email' => 'user@crave'], 
+            [
+                'username' => 'user',
+                'password' => Hash::make('password'),
+                'role' => 'user',
+            ]
+        );
     }
 }
