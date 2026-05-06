@@ -72,4 +72,4 @@ Route::middleware('auth')->group(function () {
 });
 
 // Breeze Auth Routes (Login, Register, etc.)
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
