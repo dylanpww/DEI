@@ -39,6 +39,7 @@
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
     @stack('styles')
 </head>
 <body class="bg-gray-50 flex flex-col min-h-screen font-sans relative z-0">
@@ -46,7 +47,7 @@
     <div class="fixed inset-0 opacity-40 pointer-events-none z-[-1]" style="background-image: url('{{ asset('images/pattern-light.png') }}'); background-position: center; background-size: cover; background-repeat: no-repeat;"></div>
 
     <!-- Top Navigation Bar (Desktop) -->
-    @if(!request()->is('/') && !request()->is('login') && !request()->is('register'))
+    @if(!request()->is('/') && !request()->is('login') && !request()->is('register') && !request()->routeIs('password.request') && !request()->routeIs('password.reset'))
     <header class="bg-white shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
@@ -58,8 +59,8 @@
 
                 <!-- Desktop Menu -->
                 <nav class="hidden md:flex space-x-10 text-gray-600 font-medium text-lg">
-                    <a href="{{ route('explore') }}" class="{{ request()->is('explore') ? 'text-crave-darkgreen border-b-2 border-crave-lime' : 'hover:text-crave-lime' }} transition-colors pb-1">Explore</a>
-                    <a href="{{ route('cart') }}" class="{{ request()->is('cart') ? 'text-crave-darkgreen border-b-2 border-crave-lime' : 'hover:text-crave-lime' }} transition-colors pb-1 flex items-center">Cart
+                    <a href="{{ route('explore') }}" class="{{ request()->is('explore') ? 'text-crave-darkgreen border-b-2 border-crave-lime' : 'hover:text-crave-lime' }} transition-colors pb-1">Jelajah</a>
+                    <a href="{{ route('cart') }}" class="{{ request()->is('cart') ? 'text-crave-darkgreen border-b-2 border-crave-lime' : 'hover:text-crave-lime' }} transition-colors pb-1 flex items-center">Keranjang
                         @php
                             $totalQty = array_sum(array_column(session('cart', []), 'quantity'));
                         @endphp
@@ -70,10 +71,22 @@
                         @endif
                     </a>
                     @auth
-                    <a href="{{ route('my-transactions') }}" class="{{ request()->routeIs('my-transactions') ? 'text-crave-darkgreen border-b-2 border-crave-lime' : 'hover:text-crave-lime' }} transition-colors pb-1">My Transactions</a>
+                    <a href="{{ route('chat.index') }}" class="{{ request()->is('chat*') ? 'text-crave-darkgreen border-b-2 border-crave-lime' : 'hover:text-crave-lime' }} transition-colors pb-1 flex items-center">Pesan
+                        @php
+                            $unreadCount = \App\Models\Message::whereHas('conversation', function($q) {
+                                $q->where('buyer_id', auth()->id())->orWhere('seller_id', auth()->id());
+                            })->where('sender_id', '!=', auth()->id())->where('is_read', false)->count();
+                        @endphp
+                        @if($unreadCount > 0)
+                            <span class="ml-2 bg-crave-pink text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                                {{ $unreadCount }}
+                            </span>
+                        @endif
+                    </a>
+                    <a href="{{ route('my-transactions') }}" class="{{ request()->routeIs('my-transactions') ? 'text-crave-darkgreen border-b-2 border-crave-lime' : 'hover:text-crave-lime' }} transition-colors pb-1">Transaksi Saya</a>
                     @endauth
                     @if(auth()->check() && (Auth::user()->role === 'seller' || Auth::user()->role === 'admin'))
-                    <a href="{{ route('products.index') }}" class="{{ request()->is('products*') ? 'text-crave-darkgreen border-b-2 border-crave-lime' : 'hover:text-crave-lime' }} transition-colors pb-1">My Shop</a>
+                    <a href="{{ route('products.index') }}" class="{{ request()->is('products*') ? 'text-crave-darkgreen border-b-2 border-crave-lime' : 'hover:text-crave-lime' }} transition-colors pb-1">Toko Saya</a>
                     @endif
                 </nav>
 
@@ -96,25 +109,25 @@
                             
                             @if(Auth::user()->role === 'admin')
                             <a href="{{ route('admin.dashboard') }}" class="block px-4 py-3 text-sm font-bold text-crave-teal bg-crave-lime/10 hover:bg-crave-lime/20 rounded-t-lg">
-                                🛡️ Admin Dashboard
+                                🛡️ Dasbor Admin
                             </a>
                             <div class="border-t border-gray-100"></div>
                             @endif
                             <a href="{{ route('profile.show') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-crave-teal {{ Auth::user()->role !== 'admin' ? 'rounded-t-lg' : '' }}">
-                                👤 My Profile
+                                👤 Profil Saya
                             </a>
                             <a href="{{ route('profile.edit') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-crave-teal">
-                                ⚙️ Edit Profile
+                                ⚙️ Edit Profil
                             </a>
-                            <a href="#" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-crave-teal">
-                                📦 My Orders
+                            <a href="{{ route('my-transactions') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-crave-teal">
+                                📦 Pesanan Saya
                             </a>
                             
                             <div class="border-t border-gray-100"></div>
                             <form method="POST" action="{{ route('logout') }}" class="block m-0">
                                 @csrf
                                 <button type="submit" class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-b-lg transition-colors">
-                                    🚪 Logout
+                                    🚪 Keluar
                                 </button>
                             </form>
                         </div>
@@ -143,7 +156,7 @@
     </main>
 
     <!-- Simple Footer -->
-    @if(!request()->is('/') && !request()->is('login') && !request()->is('register'))
+    @if(!request()->is('/') && !request()->is('login') && !request()->is('register') && !request()->routeIs('password.request') && !request()->routeIs('password.reset'))
     <footer class="mt-auto bg-crave-darkgreen relative overflow-hidden text-white">
         <!-- Dark Pattern Background -->
         <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: url('{{ asset('images/pattern-dark.png') }}'); background-position: center; background-size: cover; background-repeat: no-repeat;"></div>
@@ -154,11 +167,12 @@
                 <span class="text-3xl font-extrabold tracking-tight">Crave</span>
             </div>
             <div class="hidden md:block w-px h-8 bg-white/30"></div>
-            <p>&copy; {{ date('Y') }} Crave. Saving the planet, one meal at a time.</p>
+            <p>&copy; {{ date('Y') }} Crave. Menyelamatkan bumi, satu porsi pada satu waktu.</p>
         </div>
     </footer>
     @endif
 
+    @livewireScripts
     @stack('scripts')
 </body>
 

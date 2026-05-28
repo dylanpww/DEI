@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\ProductImage;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -46,15 +47,14 @@ class ProductController extends Controller
             'discount' => 'numeric|min:0',
             'stock' => 'required|integer|min:0',
             'status' => 'required|in:available,sold_out,expired',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'weight_in_grams' => 'nullable|integer|min:0',
+            'production_time' => 'nullable|date',
+            'production_label' => 'nullable|string|max:255',
+            'food_condition' => 'nullable|string|max:255',
         ]);
 
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('products', 'public');
-        }
-
-        Product::create([
+        $product = Product::create([
             'user_id' => Auth::id(), // Assign ke user yang sedang login
             'category_id' => $request->category_id,
             'name' => $request->name,
@@ -62,21 +62,29 @@ class ProductController extends Controller
             'discount' => $request->discount ?? 0,
             'stock' => $request->stock,
             'status' => $request->status,
-            'image' => $imagePath,
+            'weight_in_grams' => $request->weight_in_grams,
+            'production_time' => $request->production_time,
+            'production_label' => $request->production_label,
+            'food_condition' => $request->food_condition,
         ]);
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imagePath = $image->store('products', 'public');
+                ProductImage::create([
+                    'product_ID' => $product->product_ID,
+                    'image_path' => $imagePath,
+                ]);
+            }
+        }
 
         return redirect()->route('products.index')->with('success', 'Product added successfully!');
     }
 
     public function show($id)
     {
-        $product = Product::with('category')->findOrFail($id);
+        $product = Product::with(['category', 'images', 'reviews.user', 'user'])->findOrFail($id);
         
-        // Pastikan user tidak bisa melihat detail produk orang lain (hanya vendor/admin punya produk)
-        if ($product->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized action.');
-        }
-
         return view('products.show', compact('product'));
     }
 
@@ -104,7 +112,11 @@ class ProductController extends Controller
             'discount' => 'numeric|min:0',
             'stock' => 'required|integer|min:0',
             'status' => 'required|in:available,sold_out,expired',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'weight_in_grams' => 'nullable|integer|min:0',
+            'production_time' => 'nullable|date',
+            'production_label' => 'nullable|string|max:255',
+            'food_condition' => 'nullable|string|max:255',
         ]);
 
         $product = Product::findOrFail($id);
@@ -116,13 +128,24 @@ class ProductController extends Controller
             'discount' => $request->discount,
             'stock' => $request->stock,
             'status' => $request->status,
+            'weight_in_grams' => $request->weight_in_grams,
+            'production_time' => $request->production_time,
+            'production_label' => $request->production_label,
+            'food_condition' => $request->food_condition,
         ];
 
-        if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('products', 'public');
-        }
-        
         $product->update($data);
+
+        if ($request->hasFile('images')) {
+            // Optional: delete old images if you want, but for now just add new ones
+            foreach ($request->file('images') as $image) {
+                $imagePath = $image->store('products', 'public');
+                ProductImage::create([
+                    'product_ID' => $product->product_ID,
+                    'image_path' => $imagePath,
+                ]);
+            }
+        }
 
         return redirect()->route('products.index')->with('success', 'Product updated successfully!');
     }
