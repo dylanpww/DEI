@@ -18,13 +18,26 @@ Route::get('/', function () {
 
 Route::get('/explore', function () {
     $categories = \App\Models\Category::all();
-    $products = \App\Models\Product::with('category')
+    $products = \App\Models\Product::with(['category', 'images'])
         ->where('status', '!=', 'expired')
         ->latest()
         ->take(12)
         ->get();
 
-    return view('explore', compact('categories', 'products'));
+    $foodWasteSaved = \App\Models\OrderItem::whereHas('order', function($q) {
+        $q->where('status', 'success');
+    })->with('product')->get()->sum(function($item) {
+        return $item->qty * ($item->product->weight_in_grams ?? 0);
+    });
+
+    // Konversi ke KG jika lebih dari 1000 gram
+    if ($foodWasteSaved >= 1000) {
+        $foodWasteSaved = number_format($foodWasteSaved / 1000, 1) . ' KG';
+    } else {
+        $foodWasteSaved = $foodWasteSaved . ' Gram';
+    }
+
+    return view('explore', compact('categories', 'products', 'foodWasteSaved'));
 })->name('explore');
 
 Route::get('/dashboard', function () {
@@ -42,8 +55,7 @@ Route::middleware('auth')->group(function () {
 
     // 3. Shop / Home Screen (Where users buy items)
     Route::get('/home', function () {
-        $categories = \App\Models\Category::all();
-        return view('explore', compact('categories'));
+        return redirect()->route('explore');
     })->name('home');
 
     // 4. Cart Screen
@@ -69,6 +81,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/reviews/product/{product_id}', [ReviewController::class, 'show'])->name('reviews.show');
 
     Route::get('/my-transactions', [OrderController::class, 'index'])->name('my-transactions');
+
+    // Chat Routes
+    Route::get('/chat', [\App\Http\Controllers\ChatController::class, 'index'])->name('chat.index');
+    Route::get('/chat/{id}', [\App\Http\Controllers\ChatController::class, 'show'])->name('chat.show');
+    Route::post('/chat/start/{product_id}', [\App\Http\Controllers\ChatController::class, 'start'])->name('chat.start');
+    Route::post('/chat/{id}/message', [\App\Http\Controllers\ChatController::class, 'storeMessage'])->name('chat.storeMessage');
 });
 
 // ==========================================
@@ -80,6 +98,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('/users/{id}/block', [\App\Http\Controllers\AdminController::class, 'blockUser'])->name('users.block');
     Route::post('/users/{id}/ban', [\App\Http\Controllers\AdminController::class, 'banUser'])->name('users.ban');
     Route::post('/users/{id}/unblock', [\App\Http\Controllers\AdminController::class, 'unblockUser'])->name('users.unblock');
+    Route::post('/users/{id}/make-seller', [\App\Http\Controllers\AdminController::class, 'makeSeller'])->name('users.makeSeller');
     Route::delete('/users/{id}', [\App\Http\Controllers\AdminController::class, 'deleteUser'])->name('users.delete');
     
     Route::put('/reviews/{id}', [\App\Http\Controllers\AdminController::class, 'updateReview'])->name('reviews.update');

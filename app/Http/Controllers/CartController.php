@@ -80,7 +80,7 @@ class CartController extends Controller
                 'id' => $pid,
                 'name' => $product->name,
                 'price' => $product->actualPrice - $product->discount, // Harga setelah diskon
-                'image_url' => $product->image ? asset('storage/' . $product->image) : '',
+                'image_url' => $product->images->first() ? asset('storage/' . $product->images->first()->image_path) : ($product->image ? asset('storage/' . $product->image) : ''),
                 'unit' => '1 pcs', // Bisa disesuaikan dengan field di DB Anda
                 'quantity' => 1
             ];
@@ -177,14 +177,33 @@ class CartController extends Controller
             ]);
 
             // --- PROSES PENGURANGAN STOK ---
-            $product = Product::findOrFail($id);
-            
-            // Opsional: Cek jika stok cukup sebelum dikurangi
-            if ($product->stock < $details['quantity']) {
-                throw new \Exception("Maaf, stok untuk {$product->name} tidak mencukupi.");
-            }
+            $product = \App\Models\Product::find($id);
+            if ($product) {
+                $product->stock -= $details['quantity'];
+                if ($product->stock <= 0) {
+                    $product->status = 'sold_out';
+                }
+                $product->save();
 
-            $product->decrement('stock', $details['quantity']);
+                // INIT CHAT
+                if ($product->user_id !== \Illuminate\Support\Facades\Auth::id()) {
+                    $conversation = \App\Models\Conversation::firstOrCreate([
+                        'buyer_id' => \Illuminate\Support\Facades\Auth::id(),
+                        'seller_id' => $product->user_id,
+                        'product_ID' => $product->product_ID,
+                    ]);
+                    
+                    $messageCount = \App\Models\Message::where('conversation_id', $conversation->id)->count();
+                    if ($messageCount === 0) {
+                        \App\Models\Message::create([
+                            'conversation_id' => $conversation->id,
+                            'sender_id' => \Illuminate\Support\Facades\Auth::id(),
+                            'message' => 'Halo, saya baru saja memesan produk ini. Mohon proses pesanan saya. Terima kasih!',
+                            'is_read' => false,
+                        ]);
+                    }
+                }
+            }
             // -------------------------------
         }
 

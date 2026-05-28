@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         User::updateOrCreate(
-            ['email' => 'admin@crave'], 
+            ['email' => 'admin@crave.com'], 
             [
                 'username' => 'Super Admin',
                 'password' => Hash::make('password'),
@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
             ]
         );
         User::updateOrCreate(
-            ['email' => 'partner@crave'],
+            ['email' => 'partner@crave.com'],
             [
                 'username' => 'Crave Partner Resto',
                 'password' => Hash::make('password'),
@@ -31,7 +31,7 @@ class UserSeeder extends Seeder
             ]
         );
         User::updateOrCreate(
-            ['email' => 'user@crave'], 
+            ['email' => 'user@crave.com'], 
             [
                 'username' => 'user',
                 'password' => Hash::make('password'),

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Add New Product - Crave')
+@section('title', 'Edit Product - Crave')
 
 @section('content')
     <div class="max-w-3xl mx-auto">
@@ -9,29 +9,41 @@
                 class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-gray-500 hover:text-crave-teal transition-colors">
                 <ion-icon name="arrow-back-outline"></ion-icon>
             </a>
-            <h1 class="text-2xl font-extrabold text-gray-900">Add New Product</h1>
+            <h1 class="text-2xl font-extrabold text-gray-900">Edit Product</h1>
         </div>
 
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-            <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+            <form action="{{ route('products.update', $product->product_ID) }}" method="POST" enctype="multipart/form-data"
+                class="space-y-6">
                 @csrf
+                @method('PUT')
 
-                <!-- Image Upload -->
+                <!-- Image Upload with Current Preview -->
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Product Image</label>
+                    @php 
+                        $primaryImage = $product->images->first() ? $product->images->first()->image_path : $product->image;
+                    @endphp
+                    @if ($primaryImage)
+                        <div class="mb-4" id="current-image-container">
+                            <p class="text-xs text-gray-500 mb-2">Current Image:</p>
+                            <img src="{{ asset('storage/' . $primaryImage) }}" alt="{{ $product->name }}"
+                                class="w-32 h-32 object-cover rounded-xl border border-gray-200 shadow-sm">
+                        </div>
+                    @endif
                     <div
                         class="mt-1 relative flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-xl hover:border-crave-lime transition-colors bg-gray-50 h-48 group">
                         <div id="upload-prompt"
                             class="space-y-1 text-center flex flex-col items-center justify-center h-full">
-                            <ion-icon name="image-outline" class="mx-auto h-12 w-12 text-gray-400"></ion-icon>
+                            <ion-icon name="cloud-upload-outline" class="mx-auto h-12 w-12 text-gray-400"></ion-icon>
                             <div class="flex text-sm text-gray-600 justify-center">
                                 <label for="image"
                                     class="relative cursor-pointer bg-white rounded-md font-medium text-crave-teal hover:text-crave-darkgreen focus-within:outline-none px-2 py-1">
-                                    <span>Upload a file</span>
-                                    <input id="image" name="image" type="file" class="sr-only" accept="image/*">
+                                    <span>Upload new files</span>
+                                    <input id="image" name="images[]" type="file" class="sr-only" accept="image/*" multiple>
                                 </label>
                             </div>
-                            <p class="text-xs text-gray-500">PNG, JPG, GIF up to 2MB</p>
+                            <p class="text-xs text-gray-500">Leave blank to keep current image</p>
                         </div>
 
                         <!-- Preview Container -->
@@ -61,9 +73,9 @@
                     <!-- Name -->
                     <div class="md:col-span-2">
                         <label for="name" class="block text-sm font-semibold text-gray-700 mb-1">Product Name</label>
-                        <input type="text" name="name" id="name" value="{{ old('name') }}" required
-                            class="w-full rounded-lg border-gray-300 shadow-sm focus:border-crave-lime focus:ring focus:ring-crave-lime/20 py-2.5 px-3 border"
-                            placeholder="e.g. Surplus Blueberry Muffins">
+                        <input type="text" name="name" id="name" value="{{ old('name', $product->name) }}"
+                            required
+                            class="w-full rounded-lg border-gray-300 shadow-sm focus:border-crave-lime focus:ring focus:ring-crave-lime/20 py-2.5 px-3 border">
                         @error('name')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -77,7 +89,7 @@
                             <option value="">Select a category</option>
                             @foreach ($categories as $category)
                                 <option value="{{ $category->category_id }}"
-                                    {{ old('category_id') == $category->category_id ? 'selected' : '' }}>
+                                    {{ old('category_id', $product->category_id) == $category->category_id ? 'selected' : '' }}>
                                     {{ $category->name }}
                                 </option>
                             @endforeach
@@ -92,10 +104,12 @@
                         <label for="status" class="block text-sm font-semibold text-gray-700 mb-1">Status</label>
                         <select name="status" id="status" required
                             class="w-full rounded-lg border-gray-300 shadow-sm focus:border-crave-lime focus:ring focus:ring-crave-lime/20 py-2.5 px-3 border bg-white">
-                            <option value="available" {{ old('status') == 'available' ? 'selected' : '' }}>Available
-                            </option>
-                            <option value="sold_out" {{ old('status') == 'sold_out' ? 'selected' : '' }}>Sold Out</option>
-                            <option value="expired" {{ old('status') == 'expired' ? 'selected' : '' }}>Expired</option>
+                            <option value="available"
+                                {{ old('status', $product->status) == 'available' ? 'selected' : '' }}>Available</option>
+                            <option value="sold_out" {{ old('status', $product->status) == 'sold_out' ? 'selected' : '' }}>
+                                Sold Out</option>
+                            <option value="expired" {{ old('status', $product->status) == 'expired' ? 'selected' : '' }}>
+                                Expired</option>
                         </select>
                         @error('status')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -106,8 +120,8 @@
                     <div>
                         <label for="actualPrice" class="block text-sm font-semibold text-gray-700 mb-1">Actual Price
                             (Rp)</label>
-                        <input type="number" name="actualPrice" id="actualPrice" value="{{ old('actualPrice') }}" required
-                            min="0"
+                        <input type="number" name="actualPrice" id="actualPrice"
+                            value="{{ old('actualPrice', $product->actualPrice) }}" required min="0"
                             class="w-full rounded-lg border-gray-300 shadow-sm focus:border-crave-lime focus:ring focus:ring-crave-lime/20 py-2.5 px-3 border">
                         @error('actualPrice')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -118,8 +132,8 @@
                     <div>
                         <label for="discount" class="block text-sm font-semibold text-gray-700 mb-1">Discount Amount
                             (Rp)</label>
-                        <input type="number" name="discount" id="discount" value="{{ old('discount', 0) }}"
-                            min="0"
+                        <input type="number" name="discount" id="discount"
+                            value="{{ old('discount', $product->discount) }}" min="0"
                             class="w-full rounded-lg border-gray-300 shadow-sm focus:border-crave-lime focus:ring focus:ring-crave-lime/20 py-2.5 px-3 border">
                         @error('discount')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -129,19 +143,37 @@
                     <!-- Stock -->
                     <div>
                         <label for="stock" class="block text-sm font-semibold text-gray-700 mb-1">Stock Quantity</label>
-                        <input type="number" name="stock" id="stock" value="{{ old('stock') }}" required
-                            min="0"
+                        <input type="number" name="stock" id="stock" value="{{ old('stock', $product->stock) }}"
+                            required min="0"
                             class="w-full rounded-lg border-gray-300 shadow-sm focus:border-crave-lime focus:ring focus:ring-crave-lime/20 py-2.5 px-3 border">
                         @error('stock')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
+
+                    <!-- New Details -->
+                    <div>
+                        <label for="weight_in_grams" class="block text-sm font-semibold text-gray-700 mb-1">Weight (grams)</label>
+                        <input type="number" name="weight_in_grams" id="weight_in_grams" value="{{ old('weight_in_grams', $product->weight_in_grams) }}" min="0" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-crave-lime py-2.5 px-3 border">
+                    </div>
+                    <div>
+                        <label for="production_time" class="block text-sm font-semibold text-gray-700 mb-1">Production Time</label>
+                        <input type="datetime-local" name="production_time" id="production_time" value="{{ old('production_time', $product->production_time) }}" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-crave-lime py-2.5 px-3 border">
+                    </div>
+                    <div>
+                        <label for="production_label" class="block text-sm font-semibold text-gray-700 mb-1">Production Label</label>
+                        <input type="text" name="production_label" id="production_label" value="{{ old('production_label', $product->production_label) }}" placeholder="e.g. Halal, Organic" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-crave-lime py-2.5 px-3 border">
+                    </div>
+                    <div>
+                        <label for="food_condition" class="block text-sm font-semibold text-gray-700 mb-1">Food Condition</label>
+                        <input type="text" name="food_condition" id="food_condition" value="{{ old('food_condition', $product->food_condition) }}" placeholder="e.g. Fresh, Frozen" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-crave-lime py-2.5 px-3 border">
+                    </div>
                 </div>
 
                 <div class="pt-4 flex justify-end">
                     <button type="submit"
-                        class="px-8 py-3 bg-crave-green hover:bg-crave-darkgreen text-white font-bold rounded-xl transition-colors shadow-md">
-                        Save Product
+                        class="px-8 py-3 bg-crave-orange hover:bg-orange-500 text-white font-bold rounded-xl transition-colors shadow-md">
+                        Update Product
                     </button>
                 </div>
             </form>

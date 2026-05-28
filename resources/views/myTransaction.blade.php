@@ -4,7 +4,7 @@
     <div class="max-w-5xl mx-auto pb-20">
         <div class="flex items-center gap-3 mb-8">
             <ion-icon name="receipt-outline" class="text-3xl text-crave-darkgreen"></ion-icon>
-            <h1 class="text-3xl font-extrabold text-crave-teal">My Transactions</h1>
+            <h1 class="text-3xl font-extrabold text-crave-teal">Transaksi Saya</h1>
         </div>
 
         @if ($orders->isEmpty())
@@ -24,7 +24,7 @@
                         <!-- Header Card -->
                         <div class="bg-gray-50 px-6 py-4 flex justify-between items-center border-b border-gray-100">
                             <div>
-                                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Order Date</span>
+                                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Tanggal Pesanan</span>
                                 <p class="text-sm font-semibold text-gray-700">
                                     {{ $order->created_at->format('d M Y, H:i') }}</p>
                             </div>
@@ -43,43 +43,41 @@
                                 @foreach ($order->items as $item)
                                     <div class="flex items-center gap-4">
                                         <div class="w-16 h-16 bg-crave-beige rounded-2xl flex-shrink-0 overflow-hidden">
-                                            {{-- Jika ada image, panggil di sini --}}
-                                            <img src="{{ asset('storage/' . $item->product->image) }}"
-                                                class="w-full h-full object-cover"
-                                                onerror="this.src='https://placehold.co/100x100?text=Food'">
+                                            @php 
+                                                $primaryImage = $item->product->images->first() ? $item->product->images->first()->image_path : $item->product->image;
+                                                $stored = $primaryImage && file_exists(public_path('storage/' . $primaryImage)); 
+                                            @endphp
+                                            @if ($stored)
+                                                <img src="{{ asset('storage/' . $primaryImage) }}" alt="{{ $item->product->name }}"
+                                                    class="w-full h-full object-cover">
+                                            @else
+                                                <img src="{{ asset('images/placeholder.svg') }}" alt="Tidak ada gambar"
+                                                    class="w-full h-full object-contain p-2">
+                                            @endif
                                         </div>
                                         <div class="flex-1">
-                                            <h4 class="font-bold text-gray-800">{{ $item->product->name }}</h4>
+                                            <a href="{{ route('products.show', $item->product_id) }}" class="font-bold text-gray-800 hover:text-crave-teal transition-colors">{{ $item->product->name }}</a>
                                             <p class="text-sm text-gray-500">{{ $item->qty }}x @ Rp
                                                 {{ number_format($item->subTotal / $item->qty, 0, ',', '.') }}</p>
                                         </div>
-                                        <div class="text-right">
-                                            <p class="font-bold text-gray-800">Rp
+                                        <div class="text-right flex flex-col justify-between items-end h-full">
+                                            <p class="font-bold text-gray-800 mb-2">Rp
                                                 {{ number_format($item->subTotal, 0, ',', '.') }}</p>
+                                            
+                                            @if ($item->product->reviews->isNotEmpty())
+                                                <a href="{{ route('reviews.show', $item->product_id) }}"
+                                                    class="text-crave-darkgreen font-bold text-xs flex items-center justify-end gap-1 hover:underline">
+                                                    Lihat Review <ion-icon name="chevron-forward-outline"></ion-icon>
+                                                </a>
+                                            @elseif ($order->status == 'success')
+                                                <button type="button" x-data @click="$dispatch('open-review-modal', { productId: {{ $item->product_id }} })"
+                                                    class="text-crave-pink font-bold text-xs flex items-center justify-end gap-1 hover:underline">
+                                                    Tambah Review <ion-icon name="chevron-forward-outline"></ion-icon>
+                                                </button>
+                                            @endif
                                         </div>
                                     </div>
                                 @endforeach
-                            </div>
-
-                            <div class="text-right">
-                                @php
-                                    $hasReview = $order->items->contains(function ($item) {
-                                        return $item->product->reviews->isNotEmpty();
-                                    });
-                                @endphp
-
-                                @if ($hasReview)
-                                    {{-- Diarahkan ke detail review produk spesifik tersebut --}}
-                                    <a href="{{ route('reviews.show', $order->items->first()->product_id) }}"
-                                        class="text-crave-darkgreen font-bold text-sm flex items-center justify-end gap-1 hover:underline">
-                                        Lihat Review <ion-icon name="chevron-forward-outline"></ion-icon>
-                                    </a>
-                                @else
-                                    <a href="{{ route('reviews.create', $order->items->first()->product_id) }}"
-                                        class="text-crave-pink font-bold text-sm flex items-center justify-end gap-1 hover:underline">
-                                        Tambah Review <ion-icon name="chevron-forward-outline"></ion-icon>
-                                    </a>
-                                @endif
                             </div>
                         </div>
                     </div>
@@ -87,4 +85,5 @@
             </div>
         @endif
     </div>
+    <livewire:submit-review />
 @endsection

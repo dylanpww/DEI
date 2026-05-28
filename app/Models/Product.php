@@ -18,7 +18,11 @@ class Product extends Model
         'discount', 
         'stock', 
         'status',
-        'image'
+        'image',
+        'weight_in_grams',
+        'production_time',
+        'production_label',
+        'food_condition'
     ];
 
     public function category()
@@ -33,5 +37,10 @@ class Product extends Model
     public function reviews()
     {
         return $this->hasMany(Review::class, 'product_ID', 'product_ID');
+    }
+
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class, 'product_ID', 'product_ID');
     }
 }

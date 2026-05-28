@@ -6,7 +6,7 @@
         <div class="flex items-center justify-between border-b border-gray-100 pb-5 mb-6">
             <div class="flex items-center gap-3">
                 <ion-icon name="cart" class="text-3xl text-crave-teal"></ion-icon>
-                <h1 class="font-extrabold text-2xl text-crave-teal">My Cart</h1>
+                <h1 class="font-extrabold text-2xl text-crave-teal">Keranjang Saya</h1>
             </div>
         </div>
 
@@ -16,20 +16,20 @@
                 <div class="flex items-start gap-3">
                     <ion-icon name="location" class="text-crave-orange text-3xl mt-1"></ion-icon>
                     <div>
-                        <h3 class="font-bold text-gray-800 text-sm mb-1">Delivery Address</h3>
+                        <h3 class="font-bold text-gray-800 text-sm mb-1">Alamat Pengiriman</h3>
                         @if ($selectedAddress)
                             <p class="text-sm font-bold text-crave-teal">{{ $selectedAddress->name }} <span
                                     class="text-xs text-gray-500 font-normal ml-1">({{ $selectedAddress->telephoneNumber }})</span>
                             </p>
                             <p class="text-xs text-gray-600 mt-0.5 line-clamp-1">{{ $selectedAddress->completeAddress }}</p>
                         @else
-                            <p class="text-xs text-crave-pink font-medium mt-1">No delivery address set yet.</p>
+                            <p class="text-xs text-crave-pink font-medium mt-1">Belum ada alamat pengiriman yang diatur.</p>
                         @endif
                     </div>
                 </div>
                 <a href="{{ route('addresses.index') }}"
                     class="shrink-0 inline-flex items-center gap-1 text-crave-darkgreen hover:text-white font-bold text-sm bg-white hover:bg-crave-lime border border-crave-lime px-4 py-2 rounded-full shadow-sm transition-all">
-                    {{ $selectedAddress ? 'Change Address' : 'Add Address' }}
+                    {{ $selectedAddress ? 'Ubah Alamat' : 'Tambah Alamat' }}
                 </a>
             </div>
 
@@ -83,11 +83,11 @@
                         <span class="font-medium text-gray-800">Rp {{ number_format($totalPrice, 0, ',', '.') }}</span>
                     </div>
                     <div class="flex justify-between text-sm text-gray-500">
-                        <span>Delivery Fee</span>
+                        <span>Ongkos Kirim</span>
                         <span class="font-medium text-gray-800">Rp 10.000</span>
                     </div>
                     <div class="flex justify-between items-center pt-3 border-t border-dashed border-gray-200 mt-3">
-                        <span class="font-bold text-gray-800 text-base">Total Estimate</span>
+                        <span class="font-bold text-gray-800 text-base">Total Estimasi</span>
                         <span class="font-extrabold text-xl text-crave-darkgreen">Rp
                             {{ number_format($totalPrice + 10000, 0, ',', '.') }}</span>
                     </div>
@@ -95,7 +95,7 @@
 
                 <a href="{{ route('checkout') }}"
                     class="w-full bg-crave-green hover:bg-crave-darkgreen text-white font-bold text-lg py-4 rounded-2xl shadow-md transition-all transform hover:-translate-y-0.5 flex justify-center items-center gap-2">
-                    Go to Checkout <ion-icon name="arrow-forward-outline"></ion-icon>
+                    Lanjut ke Pembayaran <ion-icon name="arrow-forward-outline"></ion-icon>
                 </a>
             </div>
         @else
@@ -103,13 +103,13 @@
                 <div class="w-48 h-48 bg-crave-beige/50 rounded-full flex items-center justify-center mb-6">
                     <ion-icon name="basket-outline" class="text-7xl text-crave-orange/50"></ion-icon>
                 </div>
-                <h2 class="text-2xl font-bold text-crave-teal mb-2">Your cart is empty</h2>
-                <p class="text-gray-500 max-w-xs mb-8">Looks like you haven't added anything to your cart yet. Let's find
-                    some delicious surplus food!</p>
+                <h2 class="text-2xl font-bold text-crave-teal mb-2">Keranjang Anda kosong</h2>
+                <p class="text-gray-500 max-w-xs mb-8">Sepertinya Anda belum menambahkan apa pun ke keranjang Anda. Ayo temukan
+                    makanan sisa yang lezat!</p>
 
                 <a href="{{ route('home') }}"
                     class="bg-crave-orange hover:bg-crave-brown text-white font-bold py-3 px-8 rounded-full transition-all shadow-md transform hover:-translate-y-0.5 flex items-center gap-2">
-                    <ion-icon name="search-outline"></ion-icon> Start Exploring
+                    <ion-icon name="search-outline"></ion-icon> Mulai Menjelajah
                 </a>
             </div>
         @endif

@@ -27,9 +27,12 @@
                 @foreach ($products as $product)
                     <div class="bg-gray-50 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
                         <div class="h-48 bg-crave-beige flex items-center justify-center overflow-hidden">
-                            @php $stored = $product->image && file_exists(storage_path('app/public/' . $product->image)); @endphp
+                            @php 
+                                $primaryImage = $product->images->first() ? $product->images->first()->image_path : $product->image;
+                                $stored = $primaryImage && file_exists(public_path('storage/' . $primaryImage)); 
+                            @endphp
                             @if ($stored)
-                                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
+                                <img src="{{ asset('storage/' . $primaryImage) }}" alt="{{ $product->name }}"
                                     class="w-full h-full object-cover">
                             @else
                                 <img src="{{ asset('images/placeholder.svg') }}" alt="No image"

@@ -40,15 +40,7 @@
             <input type="email" name="email" value="{{ old('email') }}" required class="w-full border-b border-gray-300 py-2 outline-none focus:border-crave-lime transition-colors text-crave-teal">
         </div>
 
-        <!-- Role Selection -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">I want to...</label>
-            <select name="role" required class="w-full border-b border-gray-300 py-2 outline-none focus:border-crave-lime transition-colors text-crave-teal bg-transparent">
-                <option value="" disabled selected>Select an option</option>
-                <option value="user">Buy rescued food (User)</option>
-                <option value="seller">Sell surplus food (Restaurant/Seller)</option>
-            </select>
-        </div>
+
 
         <!-- Password Input -->
         <div>

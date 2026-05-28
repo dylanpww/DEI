@@ -89,6 +89,17 @@ class AdminController extends Controller
         return back()->with('success', 'User status reset to active.');
     }
 
+    public function makeSeller($id)
+    {
+        $this->checkAdmin();
+        $user = User::findOrFail($id);
+        
+        $user->role = 'seller';
+        $user->save();
+        
+        return back()->with('success', 'User promoted to Seller.');
+    }
+
     public function deleteUser($id)
     {
         $this->checkAdmin();
