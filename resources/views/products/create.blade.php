@@ -102,28 +102,57 @@
                         @enderror
                     </div>
 
-                    <!-- Price -->
-                    <div>
-                        <label for="actualPrice" class="block text-sm font-semibold text-gray-700 mb-1">Actual Price
-                            (Rp)</label>
-                        <input type="number" name="actualPrice" id="actualPrice" value="{{ old('actualPrice') }}" required
-                            min="0"
-                            class="w-full rounded-lg border-gray-300 shadow-sm focus:border-crave-lime focus:ring focus:ring-crave-lime/20 py-2.5 px-3 border">
-                        @error('actualPrice')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <!-- Price and Discount Wrapper -->
+                    <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6" x-data="{
+                        actualPrice: {{ old('actualPrice', 0) }},
+                        discountType: 'fixed',
+                        discountAmount: {{ old('discount', 0) }},
+                        discountPercentage: 0,
+                        updateDiscount() {
+                            if (this.discountType === 'percentage') {
+                                this.discountAmount = Math.round(this.actualPrice * (this.discountPercentage / 100));
+                            }
+                        }
+                    }">
+                        <!-- Price -->
+                        <div>
+                            <label for="actualPrice" class="block text-sm font-semibold text-gray-700 mb-1">Harga Asli (Rp)</label>
+                            <input type="number" name="actualPrice" id="actualPrice" x-model="actualPrice" @input="updateDiscount" required min="0"
+                                class="w-full rounded-lg border-gray-300 shadow-sm focus:border-crave-lime py-2.5 px-3 border bg-white">
+                            @error('actualPrice')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
 
-                    <!-- Discount -->
-                    <div>
-                        <label for="discount" class="block text-sm font-semibold text-gray-700 mb-1">Discount Amount
-                            (Rp)</label>
-                        <input type="number" name="discount" id="discount" value="{{ old('discount', 0) }}"
-                            min="0"
-                            class="w-full rounded-lg border-gray-300 shadow-sm focus:border-crave-lime focus:ring focus:ring-crave-lime/20 py-2.5 px-3 border">
-                        @error('discount')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
+                        <!-- Discount -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Diskon</label>
+                            <div class="flex gap-3">
+                                <select x-model="discountType" @change="updateDiscount" class="rounded-lg border-gray-300 shadow-sm focus:border-crave-lime py-2.5 px-3 border w-1/3 bg-white font-medium text-gray-700">
+                                    <option value="fixed">Rp</option>
+                                    <option value="percentage">%</option>
+                                </select>
+                                
+                                <div class="w-2/3">
+                                    <input x-show="discountType === 'fixed'" type="number" x-model="discountAmount" min="0"
+                                        class="w-full rounded-lg border-gray-300 shadow-sm focus:border-crave-lime py-2.5 px-3 border bg-white" placeholder="Nominal (Rp)">
+                                        
+                                    <input x-show="discountType === 'percentage'" type="number" x-model="discountPercentage" @input="updateDiscount" min="0" max="100"
+                                        class="w-full rounded-lg border-gray-300 shadow-sm focus:border-crave-lime py-2.5 px-3 border bg-white" placeholder="Persentase (%)">
+                                </div>
+                            </div>
+                            
+                            <!-- Hidden input to submit the actual discount value to the backend -->
+                            <input type="hidden" name="discount" x-model="discountAmount">
+                            
+                            <p x-show="discountType === 'percentage' && discountPercentage > 0" class="text-xs text-crave-darkgreen mt-2 font-bold bg-crave-lime/20 px-3 py-1.5 rounded-lg border border-crave-lime/30 w-fit">
+                                Potongan: Rp <span x-text="new Intl.NumberFormat('id-ID').format(discountAmount)"></span>
+                            </p>
+                            
+                            @error('discount')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
 
                     <!-- Stock -->
