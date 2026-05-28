@@ -14,6 +14,10 @@ class CartController extends Controller
 {
     public function index()
     {
+        if (Auth::check() && Auth::user()->role !== 'user') {
+            return redirect()->route('explore')->with('error', 'Penjual tidak dapat melakukan pembelian.');
+        }
+
         // Ambil data keranjang dari session, jadikan koleksi objek agar bisa dibaca oleh Blade
         $cartData = session()->get('cart', []);
         
@@ -59,6 +63,10 @@ class CartController extends Controller
 
     public function addToCart(Request $request)
     {
+        if (Auth::check() && Auth::user()->role !== 'user') {
+            return redirect()->route('explore')->with('error', 'Penjual tidak dapat melakukan pembelian.');
+        }
+
         $request->validate([
             'product_id' => 'required|exists:products,product_id',
         ]);
@@ -106,6 +114,10 @@ class CartController extends Controller
 
     public function checkout()
     {
+        if (Auth::check() && Auth::user()->role !== 'user') {
+            return redirect()->route('explore')->with('error', 'Penjual tidak dapat melakukan pembelian.');
+        }
+
         $cartData = session()->get('cart', []);
         
         // Jika keranjang kosong, kembalikan ke halaman cart
@@ -191,6 +203,7 @@ class CartController extends Controller
                         'buyer_id' => \Illuminate\Support\Facades\Auth::id(),
                         'seller_id' => $product->user_id,
                         'product_ID' => $product->product_ID,
+                        'order_id' => $order->order_id,
                     ]);
                     
                     $messageCount = \App\Models\Message::where('conversation_id', $conversation->id)->count();

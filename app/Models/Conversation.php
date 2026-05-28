@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Conversation extends Model
 {
-    protected $fillable = ['buyer_id', 'seller_id', 'product_ID'];
+    protected $fillable = ['buyer_id', 'seller_id', 'product_ID', 'order_id'];
 
     public function buyer()
     {
@@ -21,6 +21,11 @@ class Conversation extends Model
     public function product()
     {
         return $this->belongsTo(Product::class, 'product_ID', 'product_ID');
+    }
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class, 'order_id', 'order_id');
     }
 
     public function messages()

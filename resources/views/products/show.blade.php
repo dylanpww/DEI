@@ -116,6 +116,7 @@
                 </div>
 
                 <div class="mt-auto space-y-4">
+                    @if(!Auth::check() || (Auth::check() && Auth::user()->role === 'user'))
                     <form action="{{ route('cart.add') }}" method="POST">
                         @csrf
                         <input type="hidden" name="product_id" value="{{ $product->product_ID }}">
@@ -124,6 +125,7 @@
                             Tambah ke Keranjang
                         </button>
                     </form>
+                    @endif
                     
                     @if(Auth::check() && Auth::id() !== $product->user_id)
                         <form action="{{ route('chat.start', $product->product_ID) }}" method="POST">
