@@ -48,7 +48,7 @@
 
     <!-- Top Navigation Bar (Desktop) -->
     @if(!request()->is('/') && !request()->is('login') && !request()->is('register') && !request()->routeIs('password.request') && !request()->routeIs('password.reset'))
-    <header class="bg-white shadow-sm sticky top-0 z-50">
+    <header class="bg-white/80 backdrop-blur-lg border-b border-gray-100 shadow-sm sticky top-0 z-50 transition-all">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 
@@ -92,7 +92,6 @@
 
                 <!-- User Profile / Actions -->
                 <div class="flex items-center space-x-6 text-gray-500 text-2xl">
-                    <button class="hover:text-crave-pink transition-colors"><ion-icon name="heart-outline"></ion-icon></button>
                     
                     @auth
                     <!-- User Dropdown Menu -->

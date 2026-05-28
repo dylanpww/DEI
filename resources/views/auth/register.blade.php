@@ -10,7 +10,7 @@
         <img src="{{ asset('images/mascot-1.png') }}" alt="Crave Mascot" class="h-32 object-contain mb-4 drop-shadow-md">
         
         <h1 class="text-3xl font-bold text-crave-teal mb-2">Daftar</h1>
-        <p class="text-gray-500 text-sm">Masukkan detail dana untuk melanjutkan</p>
+        <p class="text-gray-500 text-sm">Masukkan detail Anda untuk melanjutkan</p>
     </div>
 
     <!-- Error Messages (If validation fails) -->
@@ -31,7 +31,7 @@
         <!-- Nama Pengguna Input -->
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Nama Pengguna</label>
-            <input type="text" name="Nama Pengguna" value="{{ old('Nama Pengguna') }}" required autofocus class="w-full border-b border-gray-300 py-2 outline-none focus:border-crave-lime transition-colors text-crave-teal">
+            <input type="text" name="username" value="{{ old('username') }}" required autofocus class="w-full border-b border-gray-300 py-2 outline-none focus:border-crave-lime transition-colors text-crave-teal">
         </div>
 
         <!-- Email Input -->
@@ -42,21 +42,21 @@
 
 
 
-        <!-- Katasdani Input -->
+        <!-- Password Input -->
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Katasdani</label>
-            <input type="Katasdani" name="Katasdani" required class="w-full border-b border-gray-300 py-2 outline-none focus:border-crave-lime transition-colors text-crave-teal">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Kata Sandi</label>
+            <input type="password" name="password" required class="w-full border-b border-gray-300 py-2 outline-none focus:border-crave-lime transition-colors text-crave-teal">
         </div>
 
-        <!-- Konfirmasi Katasdani Input -->
+        <!-- Konfirmasi Password Input -->
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Katasdani</label>
-            <input type="Katasdani" name="Katasdani_confirmation" required class="w-full border-b border-gray-300 py-2 outline-none focus:border-crave-lime transition-colors text-crave-teal">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Kata Sandi</label>
+            <input type="password" name="password_confirmation" required class="w-full border-b border-gray-300 py-2 outline-none focus:border-crave-lime transition-colors text-crave-teal">
         </div>
 
         <div class="pt-4">
             <p class="text-xs text-gray-400 text-center mb-6">
-                Dengan melanjutkan dana menyetujui <a href="#" class="text-crave-lime hover:underline">Syarat Layanan</a> dan <a href="#" class="text-crave-lime hover:underline">Kebijakan Privasi</a>.
+                Dengan melanjutkan Anda menyetujui <a href="#" class="text-crave-lime hover:underline">Syarat Layanan</a> dan <a href="#" class="text-crave-lime hover:underline">Kebijakan Privasi</a>.
             </p>
 
             <button type="submit" class="w-full bg-crave-lime text-white font-bold text-lg py-4 rounded-full shadow-lg hover:bg-crave-green transition-colors">

@@ -29,7 +29,7 @@
                                 @endif
                             </div>
                             <p class="text-sm text-crave-teal font-medium truncate mb-1">
-                                <ion-icon name="fast-food-outline" class="align-middle"></ion-icon> {{ $conversation->product->name ?? 'Produk Dihapus' }}
+                                <ion-icon name="fast-food-outline" class="align-middle" wire:ignore></ion-icon> {{ $conversation->product->name ?? 'Produk Dihapus' }}
                             </p>
                             <p class="text-sm {{ $unreadCount > 0 ? 'text-gray-900 font-semibold' : 'text-gray-500' }} truncate">
                                 @if($lastMessage)
@@ -45,7 +45,7 @@
         </div>
     @else
         <div class="p-12 text-center">
-            <ion-icon name="chatbubbles-outline" class="text-6xl text-gray-200 mb-4"></ion-icon>
+            <ion-icon name="chatbubbles-outline" class="text-6xl text-gray-200 mb-4" wire:ignore></ion-icon>
             <h3 class="text-lg font-bold text-gray-700 mb-1">Belum Ada Pesan</h3>
             <p class="text-gray-500">Mulai chat dengan penjual saat melihat produk atau checkout.</p>
         </div>

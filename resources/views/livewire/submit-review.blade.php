@@ -22,7 +22,7 @@
                     <div class="mb-8 flex justify-center gap-3">
                         @for($i = 1; $i <= 5; $i++)
                             <button type="button" wire:click="$set('rating', {{ $i }})" class="text-5xl transition-transform hover:scale-110 {{ $i <= $rating ? 'text-crave-orange' : 'text-gray-200 hover:text-gray-300' }}">
-                                <ion-icon name="star"></ion-icon>
+                                <ion-icon name="star" wire:ignore></ion-icon>
                             </button>
                         @endfor
                     </div>

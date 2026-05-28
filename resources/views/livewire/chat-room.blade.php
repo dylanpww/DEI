@@ -7,7 +7,7 @@
     <div class="bg-white rounded-t-2xl shadow-sm border-b border-gray-100 p-4 flex items-center justify-between z-10 relative">
         <div class="flex items-center gap-4">
             <a href="{{ route('chat.index') }}" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 hover:text-crave-teal transition-colors">
-                <ion-icon name="arrow-back-outline"></ion-icon>
+                <ion-icon name="arrow-back-outline" wire:ignore></ion-icon>
             </a>
             <div class="w-10 h-10 rounded-full bg-crave-teal flex items-center justify-center text-white font-bold text-lg">
                 {{ strtoupper(substr($otherUser->username ?? 'U', 0, 1)) }}
@@ -19,7 +19,7 @@
         </div>
         @if($conversation->product_ID)
         <a href="{{ route('products.show', $conversation->product_ID) }}" class="flex items-center gap-2 bg-gray-50 hover:bg-crave-lime px-3 py-1.5 rounded-lg transition-colors border border-gray-100">
-            <ion-icon name="fast-food-outline" class="text-crave-teal"></ion-icon>
+            <ion-icon name="fast-food-outline" class="text-crave-teal" wire:ignore></ion-icon>
             <span class="text-xs font-bold text-gray-700 truncate max-w-[100px] sm:max-w-xs">{{ $conversation->product->name ?? 'Produk Dihapus' }}</span>
         </a>
         @endif
@@ -29,7 +29,7 @@
     <div wire:poll.2s class="flex-1 bg-crave-beige overflow-y-auto p-4 md:p-6 space-y-4" id="chat-container">
         @if($conversation->messages->count() === 0)
             <div class="h-full flex flex-col items-center justify-center text-center opacity-50">
-                <ion-icon name="chatbubbles" class="text-5xl text-gray-400 mb-2"></ion-icon>
+                <ion-icon name="chatbubbles" class="text-5xl text-gray-400 mb-2" wire:ignore></ion-icon>
                 <p class="text-gray-500 font-medium">Mulai percakapan dengan {{ $otherUser->username ?? 'pengguna ini' }}</p>
             </div>
         @else
@@ -43,7 +43,9 @@
                         <div class="flex items-center justify-end gap-1 mt-1 opacity-70">
                             <span class="text-[10px]">{{ $message->created_at->format('H:i') }}</span>
                             @if($isMe)
-                                <ion-icon name="checkmark-done-outline" class="{{ $message->is_read ? 'text-crave-lime' : 'text-gray-300' }}"></ion-icon>
+                                <span class="{{ $message->is_read ? 'text-crave-lime' : 'text-gray-300' }}">
+                                    <ion-icon name="checkmark-done-outline" wire:ignore></ion-icon>
+                                </span>
                             @endif
                         </div>
                     </div>
@@ -70,7 +72,7 @@
         <form wire:submit.prevent="sendMessage" class="flex gap-2">
             <input type="text" wire:model="message" required autocomplete="off" placeholder="Ketik pesan Anda di sini..." class="flex-1 rounded-xl border-gray-200 bg-gray-50 focus:bg-white focus:border-crave-lime focus:ring focus:ring-crave-lime/20 px-4 py-3 transition-colors shadow-inner text-sm">
             <button type="submit" class="bg-crave-lime hover:bg-crave-green text-crave-darkgreen w-12 h-12 rounded-xl flex items-center justify-center text-xl transition-all shadow-sm">
-                <ion-icon name="send"></ion-icon>
+                <ion-icon name="send" wire:ignore></ion-icon>
             </button>
         </form>
     </div>

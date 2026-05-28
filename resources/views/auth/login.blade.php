@@ -11,11 +11,11 @@
         
         <div class="w-full">
             <h1 class="text-3xl font-bold text-crave-teal mb-2">Masuk</h1>
-            <p class="text-gray-500 text-sm">Masukkan email dan kata sdani dana</p>
+            <p class="text-gray-500 text-sm">Masukkan email dan kata sandi Anda</p>
         </div>
     </div>
 
-    <!-- Session Status (e.g., successful Katasdani reset) -->
+    <!-- Session Status (e.g., successful password reset) -->
     @if (session('status'))
         <div class="w-full mb-4 font-medium text-sm text-green-600 bg-green-50 p-3 rounded-xl border border-green-100">
             {{ session('status') }}
@@ -43,24 +43,24 @@
             <input type="email" name="email" value="{{ old('email') }}" required autofocus placeholder="email@contoh.com" class="w-full border-b border-gray-300 py-2 outline-none focus:border-crave-lime transition-colors text-crave-teal">
         </div>
 
-        <!-- Katasdani Input -->
+        <!-- Password Input -->
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Kata Sdani</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Kata Sandi</label>
             <div class="relative">
-                <input type="Katasdani" id="Katasdani" name="Katasdani" required placeholder="••••••••" class="w-full border-b border-gray-300 py-2 outline-none focus:border-crave-lime transition-colors text-crave-teal pr-10">
+                <input type="password" id="password" name="password" required placeholder="••••••••" class="w-full border-b border-gray-300 py-2 outline-none focus:border-crave-lime transition-colors text-crave-teal pr-10">
                 
-                <!-- Toggle Katasdani Visibility Icon -->
-                <button type="button" id="toggleKatasdani" class="absolute right-0 top-2 text-gray-400 hover:text-crave-teal">
+                <!-- Toggle Password Visibility Icon -->
+                <button type="button" id="togglePassword" class="absolute right-0 top-2 text-gray-400 hover:text-crave-teal">
                     <ion-icon name="eye-off-outline" id="toggleIcon" class="text-lg"></ion-icon>
                 </button>
             </div>
         </div>
 
-        <!-- Forgot Katasdani Link -->
+        <!-- Forgot Password Link -->
         <div class="flex justify-end pt-2">
-            @if (Route::has('Katasdani.request'))
-                <a href="{{ route('Katasdani.request') }}" class="text-sm text-gray-500 hover:text-crave-lime hover:underline transition-colors">
-                    Lupa Kata Sdani?
+            @if (Route::has('password.request'))
+                <a href="{{ route('password.request') }}" class="text-sm text-gray-500 hover:text-crave-lime hover:underline transition-colors">
+                    Lupa Kata Sandi?
                 </a>
             @endif
         </div>
@@ -88,17 +88,17 @@
 
 @push('scripts')
 <script>
-    const toggleKatasdani = document.getElementById('toggleKatasdani');
-    const Katasdani = document.getElementById('Katasdani');
+    const togglePassword = document.getElementById('togglePassword');
+    const password = document.getElementById('password');
     const toggleIcon = document.getElementById('toggleIcon');
 
-    toggleKatasdani.addEventListener('click', function (e) {
+    togglePassword.addEventListener('click', function (e) {
         // toggle the type attribute
-        const type = Katasdani.getAttribute('type') === 'Katasdani' ? 'text' : 'Katasdani';
-        Katasdani.setAttribute('type', type);
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
         
         // toggle the icon
-        if (type === 'Katasdani') {
+        if (type === 'password') {
             toggleIcon.setAttribute('name', 'eye-off-outline');
         } else {
             toggleIcon.setAttribute('name', 'eye-outline');
