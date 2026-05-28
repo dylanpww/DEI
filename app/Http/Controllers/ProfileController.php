@@ -16,28 +16,51 @@ class ProfileController extends Controller
      */
     public function show(Request $request): View
     {
-        $orders = [
-            ['id' => 'ORD-001', 'item' => 'Surplus Bakery Bread', 'price' => 4.50, 'status' => 'Completed', 'date' => '2026-05-01'],
-            ['id' => 'ORD-002', 'item' => 'Leftover Pizza Slice', 'price' => 3.00, 'status' => 'Completed', 'date' => '2026-05-03'],
-            ['id' => 'ORD-003', 'item' => 'Veggie Salad Bowl', 'price' => 5.50, 'status' => 'Picked Up', 'date' => '2026-05-04'],
-        ];
+        $dbOrders = \App\Models\Order::with('items.product')->where('user_id', Auth::id())->latest()->take(5)->get();
+        $orders = $dbOrders->map(function($o) {
+            $firstItem = $o->items->first();
+            $itemName = $firstItem && $firstItem->product ? $firstItem->product->name : 'Pesanan';
+            if($o->items->count() > 1) {
+                $itemName .= ' + ' . ($o->items->count() - 1) . ' lainnya';
+            }
+            return [
+                'id' => 'ORD-' . $o->order_id,
+                'item' => $itemName,
+                'price' => $o->totalPrice,
+                'status' => ucfirst($o->status),
+                'date' => $o->created_at->format('Y-m-d')
+            ];
+        });
 
-        $reviews = [
-            ['seller' => 'The Daily Bakery', 'rating' => 5, 'comment' => 'The pastries were still super fresh!'],
-            ['seller' => 'Pizza Palace', 'rating' => 4, 'comment' => 'Great value for money.'],
-        ];
+        $dbReviews = \App\Models\Review::with('product.user')->where('user_ID', Auth::id())->latest()->take(5)->get();
+        $reviews = $dbReviews->map(function($r) {
+            return [
+                'seller' => $r->product && $r->product->user ? $r->product->user->username : 'Penjual',
+                'rating' => $r->rating,
+                'comment' => $r->comment
+            ];
+        });
 
-        $favorites = [
-            ['name' => 'The Daily Bakery', 'type' => 'Bakery'],
-            ['name' => 'Green Leaf Salads', 'type' => 'Healthy'],
-        ];
+        $foodWasteSaved = \App\Models\OrderItem::whereHas('order', function($q) {
+            $q->whereIn('status', ['success', 'settlement'])
+              ->where('user_id', Auth::id());
+        })->with('product')->get()->sum(function($item) {
+            return $item->qty * ($item->product->weight_in_grams ?? 0);
+        });
+
+        $moneySaved = \App\Models\OrderItem::whereHas('order', function($q) {
+            $q->whereIn('status', ['success', 'settlement'])
+              ->where('user_id', Auth::id());
+        })->with('product')->get()->sum(function($item) {
+            return $item->qty * ($item->product->discount ?? 0);
+        });
 
         $stats = [
-            'food_saved_kg' => 5.2,
-            'money_saved' => 45.00,
+            'food_saved_kg' => number_format($foodWasteSaved / 1000, 1),
+            'money_saved' => $moneySaved,
         ];
 
-        return view('profile.show', compact('orders', 'reviews', 'favorites', 'stats'));
+        return view('profile.show', compact('orders', 'reviews', 'stats'));
     }
 
     /**

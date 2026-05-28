@@ -69,7 +69,7 @@
                                                     class="text-crave-darkgreen font-bold text-xs flex items-center justify-end gap-1 hover:underline">
                                                     Lihat Review <ion-icon name="chevron-forward-outline"></ion-icon>
                                                 </a>
-                                            @elseif ($order->status == 'success')
+                                            @elseif ($order->status == 'success' || strtolower($order->status) == 'settlement')
                                                 <button type="button" x-data @click="$dispatch('open-review-modal', { productId: {{ $item->product_id }} })"
                                                     class="text-crave-pink font-bold text-xs flex items-center justify-end gap-1 hover:underline">
                                                     Tambah Review <ion-icon name="chevron-forward-outline"></ion-icon>

@@ -25,7 +25,7 @@ Route::get('/explore', function () {
         ->get();
 
     $foodWasteSaved = \App\Models\OrderItem::whereHas('order', function($q) {
-        $q->where('status', 'success');
+        $q->whereIn('status', ['success', 'settlement']);
     })->with('product')->get()->sum(function($item) {
         return $item->qty * ($item->product->weight_in_grams ?? 0);
     });
@@ -41,7 +41,19 @@ Route::get('/explore', function () {
 })->name('explore');
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    $foodWasteSaved = \App\Models\OrderItem::whereHas('order', function($q) {
+        $q->whereIn('status', ['success', 'settlement']);
+    })->with('product')->get()->sum(function($item) {
+        return $item->qty * ($item->product->weight_in_grams ?? 0);
+    });
+
+    if ($foodWasteSaved >= 1000) {
+        $foodWasteSaved = number_format($foodWasteSaved / 1000, 1) . ' KG';
+    } else {
+        $foodWasteSaved = $foodWasteSaved . ' Gram';
+    }
+
+    return view('dashboard', compact('foodWasteSaved'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/category/{categoryId}', [ProductController::class, 'byCategory'])->name('products.by-category');

@@ -36,7 +36,7 @@ class SubmitReview extends Component
 
         Review::create([
             'product_ID' => $this->productId,
-            'user_id' => Auth::id(),
+            'user_ID' => Auth::id(),
             'rating' => $this->rating,
             'comment' => $this->comment,
         ]);
