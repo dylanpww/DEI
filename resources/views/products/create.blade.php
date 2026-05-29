@@ -131,6 +131,7 @@
                             } else {
                                 this.computedDiscount = val;
                             }
+                            document.getElementById('hidden_discount_create').value = this.computedDiscount;
                         }
                     }">
                         <!-- Price -->
@@ -160,7 +161,7 @@
                             </div>
                             
                             <!-- Hidden input to submit the actual discount value to the backend -->
-                            <input type="number" name="discount" x-model="computedDiscount" class="hidden">
+                            <input type="hidden" id="hidden_discount_create" name="discount" value="{{ old('discount', 0) !== '' && old('discount', 0) !== null ? (int) old('discount', 0) : 0 }}">
                             
                             <p x-show="discountType === 'percentage' && computedDiscount > 0" class="text-xs text-crave-darkgreen mt-2 font-bold bg-crave-lime/20 px-3 py-1.5 rounded-lg border border-crave-lime/30 w-fit">
                                 Potongan: Rp <span x-text="new Intl.NumberFormat('id-ID').format(computedDiscount)"></span>
