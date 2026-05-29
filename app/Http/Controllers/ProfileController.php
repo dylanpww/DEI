@@ -16,48 +16,118 @@ class ProfileController extends Controller
      */
     public function show(Request $request): View
     {
-        $dbOrders = \App\Models\Order::with('items.product')->where('user_id', Auth::id())->latest()->take(5)->get();
-        $orders = $dbOrders->map(function($o) {
-            $firstItem = $o->items->first();
-            $itemName = $firstItem && $firstItem->product ? $firstItem->product->name : 'Pesanan';
-            if($o->items->count() > 1) {
-                $itemName .= ' + ' . ($o->items->count() - 1) . ' lainnya';
-            }
-            return [
-                'id' => 'ORD-' . $o->order_id,
-                'item' => $itemName,
-                'price' => $o->totalPrice,
-                'status' => ucfirst($o->status),
-                'date' => $o->created_at->format('Y-m-d')
-            ];
-        });
+        $userId = Auth::id();
+        $isSeller = Auth::user()->role === 'seller' || Auth::user()->role === 'admin';
 
-        $dbReviews = \App\Models\Review::with('product.user')->where('user_ID', Auth::id())->latest()->take(5)->get();
-        $reviews = $dbReviews->map(function($r) {
-            return [
-                'seller' => $r->product && $r->product->user ? $r->product->user->username : 'Penjual',
-                'rating' => $r->rating,
-                'comment' => $r->comment
-            ];
-        });
+        if ($isSeller) {
+            $dbOrders = \App\Models\Order::whereHas('items.product', function($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })->with(['items' => function($q) use ($userId) {
+                $q->whereHas('product', function($q2) use ($userId) {
+                    $q2->where('user_id', $userId);
+                });
+            }, 'items.product'])->latest()->take(5)->get();
 
-        $foodWasteSaved = \App\Models\OrderItem::whereHas('order', function($q) {
-            $q->whereIn('status', ['success', 'settlement'])
-              ->where('user_id', Auth::id());
-        })->with('product')->get()->sum(function($item) {
-            return $item->qty * ($item->product->weight_in_grams ?? 0);
-        });
+            $orders = $dbOrders->map(function($o) {
+                $firstItem = $o->items->first();
+                $itemName = $firstItem && $firstItem->product ? $firstItem->product->name : 'Pesanan';
+                if($o->items->count() > 1) {
+                    $itemName .= ' + ' . ($o->items->count() - 1) . ' lainnya';
+                }
+                return [
+                    'id' => 'ORD-' . $o->order_id,
+                    'item' => $itemName,
+                    'price' => $o->items->sum('subTotal'), // Only seller's items sum
+                    'status' => ucfirst($o->status),
+                    'date' => $o->created_at->format('Y-m-d')
+                ];
+            });
 
-        $moneySaved = \App\Models\OrderItem::whereHas('order', function($q) {
-            $q->whereIn('status', ['success', 'settlement'])
-              ->where('user_id', Auth::id());
-        })->with('product')->get()->sum(function($item) {
-            return $item->qty * ($item->product->discount ?? 0);
-        });
+            $dbReviews = \App\Models\Review::whereHas('product', function($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })->with('user', 'product')->latest()->take(5)->get();
+            
+            $reviews = $dbReviews->map(function($r) {
+                return [
+                    'seller' => $r->user ? $r->user->username : 'Pembeli',
+                    'rating' => $r->rating,
+                    'comment' => $r->comment
+                ];
+            });
+
+            $foodWasteSaved = \App\Models\OrderItem::whereHas('product', function($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })->whereHas('order', function($q) {
+                $q->whereIn('status', ['success', 'settlement']);
+            })->with('product')->get()->sum(function($item) {
+                return $item->qty * ($item->product->weight_in_grams ?? 0);
+            });
+
+            $moneySaved = \App\Models\OrderItem::whereHas('product', function($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })->whereHas('order', function($q) {
+                $q->whereIn('status', ['success', 'settlement']);
+            })->sum('subTotal');
+            
+            $totalOrders = \App\Models\OrderItem::whereHas('product', function($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })->whereHas('order', function($q) {
+                $q->whereIn('status', ['success', 'settlement']);
+            })->get()->unique('order_id')->count();
+            
+            $totalReviews = \App\Models\Review::whereHas('product', function($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })->count();
+
+        } else {
+            $dbOrders = \App\Models\Order::with('items.product')->where('user_id', $userId)->latest()->take(5)->get();
+            $orders = $dbOrders->map(function($o) {
+                $firstItem = $o->items->first();
+                $itemName = $firstItem && $firstItem->product ? $firstItem->product->name : 'Pesanan';
+                if($o->items->count() > 1) {
+                    $itemName .= ' + ' . ($o->items->count() - 1) . ' lainnya';
+                }
+                return [
+                    'id' => 'ORD-' . $o->order_id,
+                    'item' => $itemName,
+                    'price' => $o->totalPrice,
+                    'status' => ucfirst($o->status),
+                    'date' => $o->created_at->format('Y-m-d')
+                ];
+            });
+
+            $dbReviews = \App\Models\Review::with('product.user')->where('user_ID', $userId)->latest()->take(5)->get();
+            $reviews = $dbReviews->map(function($r) {
+                return [
+                    'seller' => $r->product && $r->product->user ? $r->product->user->username : 'Penjual',
+                    'rating' => $r->rating,
+                    'comment' => $r->comment
+                ];
+            });
+
+            $foodWasteSaved = \App\Models\OrderItem::whereHas('order', function($q) use ($userId) {
+                $q->whereIn('status', ['success', 'settlement'])->where('user_id', $userId);
+            })->with('product')->get()->sum(function($item) {
+                return $item->qty * ($item->product->weight_in_grams ?? 0);
+            });
+
+            $moneySaved = \App\Models\OrderItem::whereHas('order', function($q) use ($userId) {
+                $q->whereIn('status', ['success', 'settlement'])->where('user_id', $userId);
+            })->with('product')->get()->sum(function($item) {
+                return $item->qty * ($item->product->discount ?? 0);
+            });
+            
+            $totalOrders = \App\Models\Order::where('user_id', $userId)->whereIn('status', ['success', 'settlement'])->count();
+            
+            $totalReviews = \App\Models\Review::where('user_ID', $userId)->count();
+        }
 
         $stats = [
             'food_saved_kg' => number_format($foodWasteSaved / 1000, 1),
             'money_saved' => $moneySaved,
+            'total_orders' => $totalOrders,
+            'total_reviews' => $totalReviews ?? count($dbReviews),
+            'is_seller' => $isSeller
         ];
 
         return view('profile.show', compact('orders', 'reviews', 'stats'));

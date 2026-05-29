@@ -71,18 +71,18 @@
 
                     <!-- Kategori -->
                     <div>
-                        <label for="Kategori_id" class="block text-sm font-semibold text-gray-700 mb-1">Kategori</label>
-                        <select name="Kategori_id" id="Kategori_id" required
-                            class="w-full rounded-lg border-gray-300 shadow-sm focus:border-crave-lime focus:ring focus:ring-crave-lime/20 py-2.5 px-3 border bg-white">
-                            <option value="">Select a Kategori</option>
+                        <label for="category_id" class="block text-sm font-semibold text-gray-700 mb-1">Kategori</label>
+                        <select name="category_id" id="category_id" required
+                            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-crave-teal focus:ring-1 focus:ring-crave-teal transition-colors bg-white">
+                            <option value="">Pilih Kategori</option>
                             @foreach ($categories as $Kategori)
-                                <option value="{{ $Kategori->Kategori_id }}"
-                                    {{ old('Kategori_id') == $Kategori->Kategori_id ? 'selected' : '' }}>
+                                <option value="{{ $Kategori->category_id }}"
+                                    {{ old('category_id') == $Kategori->category_id ? 'selected' : '' }}>
                                     {{ $Kategori->name }}
                                 </option>
                             @endforeach
                         </select>
-                        @error('Kategori_id')
+                        @error('category_id')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>

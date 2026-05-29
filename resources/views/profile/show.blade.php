@@ -59,7 +59,9 @@
                     <div class="w-10 h-10 rounded-full bg-crave-lime/20 flex items-center justify-center text-crave-darkgreen text-xl mb-3">
                         <ion-icon name="wallet"></ion-icon>
                     </div>
-                    <p class="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">Uang Dihemat</p>
+                    <p class="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">
+                        {{ isset($stats['is_seller']) && $stats['is_seller'] ? 'Uang Didapatkan' : 'Uang Dihemat' }}
+                    </p>
                     <p class="text-2xl font-black text-crave-green drop-shadow-sm">Rp {{ number_format($stats['money_saved'] ?? 0, 0, ',', '.') }}</p>
                 </div>
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100/50 transform hover:-translate-y-1 hover:shadow-md transition-all">
@@ -67,14 +69,16 @@
                         <ion-icon name="receipt"></ion-icon>
                     </div>
                     <p class="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">Total Pesanan</p>
-                    <p class="text-3xl font-black text-crave-teal">{{ count($orders ?? []) }}</p>
+                    <p class="text-3xl font-black text-crave-teal">{{ $stats['total_orders'] ?? 0 }}</p>
                 </div>
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100/50 transform hover:-translate-y-1 hover:shadow-md transition-all">
                     <div class="w-10 h-10 rounded-full bg-crave-teal/10 flex items-center justify-center text-crave-teal text-xl mb-3">
                         <ion-icon name="star"></ion-icon>
                     </div>
-                    <p class="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">Ulasan Diberikan</p>
-                    <p class="text-3xl font-black text-crave-teal">{{ count($reviews ?? []) }}</p>
+                    <p class="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">
+                        {{ isset($stats['is_seller']) && $stats['is_seller'] ? 'Ulasan Diterima' : 'Ulasan Diberikan' }}
+                    </p>
+                    <p class="text-3xl font-black text-crave-teal">{{ $stats['total_reviews'] ?? 0 }}</p>
                 </div>
             </div>
         </div>
@@ -132,7 +136,7 @@
                         <div class="w-10 h-10 rounded-full bg-crave-orange/10 flex items-center justify-center text-crave-orange">
                             <ion-icon name="star-half-outline"></ion-icon>
                         </div>
-                        Ulasan Saya
+                        {{ isset($stats['is_seller']) && $stats['is_seller'] ? 'Ulasan Produk' : 'Ulasan Saya' }}
                     </h2>
                 </div>
                 
