@@ -27,7 +27,7 @@ class ChatController extends Controller
         $userId = Auth::id();
         $conversation = Conversation::with(['messages.sender', 'buyer', 'seller', 'product'])->findOrFail($id);
 
-        if ($conversation->buyer_id !== $userId && $conversation->seller_id !== $userId) {
+        if ($conversation->buyer_id != $userId && $conversation->seller_id != $userId) {
             abort(403);
         }
 
@@ -68,7 +68,7 @@ class ChatController extends Controller
         $conversation = Conversation::findOrFail($conversationId);
         $userId = Auth::id();
 
-        if ($conversation->buyer_id !== $userId && $conversation->seller_id !== $userId) {
+        if ($conversation->buyer_id != $userId && $conversation->seller_id != $userId) {
             abort(403);
         }
 
