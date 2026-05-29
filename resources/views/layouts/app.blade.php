@@ -39,6 +39,7 @@
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
     @stack('styles')
 </head>
 <body class="bg-gray-50 flex flex-col min-h-screen font-sans relative z-0">
@@ -172,6 +173,7 @@
     </footer>
     @endif
 
+    @livewireScripts
     @stack('scripts')
 </body>
 
