@@ -1,7 +1,7 @@
 <div>
     <div class="max-w-4xl mx-auto h-[80vh] flex flex-col pb-6" x-data="{ scrollToBottom() { const c = document.getElementById('chat-container'); if(c) c.scrollTop = c.scrollHeight; } }" x-init="scrollToBottom()" @message-sent.window="setTimeout(() => scrollToBottom(), 50)">
     @php
-        $isSeller = Auth::id() === $conversation->seller_id;
+        $isSeller = Auth::id() == $conversation->seller_id;
         $otherUser = $isSeller ? $conversation->buyer : $conversation->seller;
     @endphp
         <!-- Header -->
@@ -36,7 +36,7 @@
             @else
                 @foreach($conversation->messages->sortBy('created_at') as $message)
                     @php
-                        $isMe = $message->sender_id === Auth::id();
+                        $isMe = $message->sender_id == Auth::id();
                     @endphp
                     <div wire:key="message-{{ $message->id }}" class="flex {{ $isMe ? 'justify-end' : 'justify-start' }}">
                         <div class="max-w-[75%] md:max-w-[60%] {{ $isMe ? 'bg-crave-teal text-white rounded-l-2xl rounded-tr-2xl' : 'bg-white text-gray-800 rounded-r-2xl rounded-tl-2xl shadow-sm' }} p-3 md:p-4">
