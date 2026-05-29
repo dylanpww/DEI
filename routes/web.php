@@ -134,3 +134,16 @@ Route::get('/run-migrations', function () {
 // Breeze Auth Routes (Login, Register, etc.)
 require __DIR__ . '/auth.php';
 
+// Route to clear caches for Shared Hosting
+Route::get('/deploy-now', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('view:clear');
+        \Illuminate\Support\Facades\Artisan::call('cache:clear');
+        \Illuminate\Support\Facades\Artisan::call('config:clear');
+        \Illuminate\Support\Facades\Artisan::call('route:clear');
+        return "Semua cache berhasil dibersihkan! (View, Cache, Config, Route). Silakan refresh halaman chat.";
+    } catch (\Exception $e) {
+        return "Gagal membersihkan cache: " . $e->getMessage();
+    }
+});
+
