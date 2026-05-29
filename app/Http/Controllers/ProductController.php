@@ -18,9 +18,39 @@ class ProductController extends Controller
         }
         
         // Mengambil produk milik user yang sedang login beserta data kategorinya
-        $products = Product::with('category')->where('user_id', Auth::id())->get();
+        $products = Product::with(['category', 'images', 'reviews'])->where('user_id', Auth::id())->get();
         $isSeller = Auth::user()->role === 'seller' || Auth::user()->role === 'admin';
-        return view('products.index', compact('products', 'isSeller'));
+        
+        // --- Hitung Analitik Dasbor Toko ---
+        $sellerProductIds = $products->pluck('product_ID');
+        
+        // Ambil semua item pesanan sukses untuk produk penjual ini
+        $successfulOrderItems = \App\Models\OrderItem::whereIn('product_id', $sellerProductIds)
+            ->whereHas('order', function($q) {
+                $q->whereIn('status', ['success', 'settlement']);
+            })->get();
+            
+        // 1. Total Pendapatan
+        $totalPendapatan = $successfulOrderItems->sum('subTotal');
+        
+        // 2. Total Pesanan
+        $totalPesanan = $successfulOrderItems->unique('order_id')->count();
+        
+        // 3. Penilaian Toko
+        $allReviews = collect();
+        foreach($products as $product) {
+            $allReviews = $allReviews->merge($product->reviews);
+        }
+        $avgRating = $allReviews->count() > 0 ? number_format($allReviews->avg('rating'), 1) : '0.0';
+        
+        // 4. Pesanan Terbaru
+        $recentOrders = \App\Models\Order::whereHas('items', function($q) use ($sellerProductIds) {
+            $q->whereIn('product_id', $sellerProductIds);
+        })->with(['items' => function($q) use ($sellerProductIds) {
+            $q->whereIn('product_id', $sellerProductIds);
+        }, 'user', 'items.product'])->latest()->take(5)->get();
+
+        return view('products.index', compact('products', 'isSeller', 'totalPendapatan', 'totalPesanan', 'avgRating', 'recentOrders'));
     }
 
     public function create()

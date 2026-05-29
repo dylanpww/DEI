@@ -4,12 +4,12 @@
         <button @click="activeTab = 'onProgress'" 
             :class="{'bg-white shadow-sm border-gray-200 text-crave-darkgreen': activeTab === 'onProgress', 'text-gray-500 hover:bg-white/50 border-transparent': activeTab !== 'onProgress'}" 
             class="flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all border flex items-center justify-center gap-2">
-            <ion-icon name="time-outline" class="text-lg"></ion-icon> Akan Datang / Diproses
+            <span wire:ignore><ion-icon name="time-outline" class="text-lg"></ion-icon></span> Akan Datang / Diproses
         </button>
         <button @click="activeTab = 'selesai'" 
             :class="{'bg-white shadow-sm border-gray-200 text-crave-darkgreen': activeTab === 'selesai', 'text-gray-500 hover:bg-white/50 border-transparent': activeTab !== 'selesai'}" 
             class="flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all border flex items-center justify-center gap-2">
-            <ion-icon name="checkmark-done-circle-outline" class="text-lg"></ion-icon> Selesai
+            <span wire:ignore><ion-icon name="checkmark-done-circle-outline" class="text-lg"></ion-icon></span> Selesai
         </button>
     </div>
 

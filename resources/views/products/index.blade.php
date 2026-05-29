@@ -27,7 +27,7 @@
                 </div>
                 <div>
                     <p class="text-sm font-medium text-gray-500">Total Pendapatan</p>
-                    <p class="text-2xl font-bold text-gray-900">Rp 2.450k</p>
+                    <p class="text-2xl font-bold text-gray-900">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</p>
                 </div>
             </div>
 
@@ -37,7 +37,7 @@
                 </div>
                 <div>
                     <p class="text-sm font-medium text-gray-500">Total Pesanan</p>
-                    <p class="text-2xl font-bold text-gray-900">48</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ $totalPesanan }}</p>
                 </div>
             </div>
 
@@ -57,7 +57,7 @@
                 </div>
                 <div>
                     <p class="text-sm font-medium text-gray-500">Penilaian Toko</p>
-                    <p class="text-2xl font-bold text-gray-900">4.8 <span class="text-sm text-gray-400 font-normal">/
+                    <p class="text-2xl font-bold text-gray-900">{{ $avgRating }} <span class="text-sm text-gray-400 font-normal">/
                             5</span></p>
                 </div>
             </div>
@@ -179,14 +179,47 @@
         </div>
 
         <!-- Recent Orders -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mt-8">
             <div class="px-6 py-5 border-b border-gray-100 bg-gray-50/50">
                 <h2 class="text-xl font-bold text-gray-800">Pesanan Terbaru</h2>
             </div>
-            <div class="p-6 text-center text-gray-500">
-                <ion-icon name="receipt-outline" class="text-4xl mb-2 text-gray-300"></ion-icon>
-                <p>Riwayat pesanan akan muncul di sini.</p>
-            </div>
+            @if($recentOrders->isEmpty())
+                <div class="p-6 text-center text-gray-500">
+                    <ion-icon name="receipt-outline" class="text-4xl mb-2 text-gray-300"></ion-icon>
+                    <p>Riwayat pesanan akan muncul di sini.</p>
+                </div>
+            @else
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left whitespace-nowrap">
+                        <thead class="bg-gray-50 text-gray-500 text-sm uppercase tracking-wider">
+                            <tr>
+                                <th class="px-6 py-4 font-medium">Pembeli</th>
+                                <th class="px-6 py-4 font-medium">Item</th>
+                                <th class="px-6 py-4 font-medium">Total</th>
+                                <th class="px-6 py-4 font-medium">Status</th>
+                                <th class="px-6 py-4 font-medium">Tanggal</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            @foreach($recentOrders as $order)
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="px-6 py-4 font-semibold text-gray-900">{{ $order->user->username ?? 'Guest' }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-600">
+                                        {{ $order->items->sum('qty') }} porsi ({{ $order->items->first()->product->name ?? 'Produk' }}...)
+                                    </td>
+                                    <td class="px-6 py-4 font-bold text-crave-darkgreen">Rp {{ number_format($order->items->sum('subTotal'), 0, ',', '.') }}</td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-3 py-1 rounded-full text-xs font-semibold border {{ $order->status == 'pending' ? 'bg-orange-50 text-crave-orange border-orange-200' : 'bg-crave-lime/20 text-crave-darkgreen border-crave-lime/50' }}">
+                                            {{ strtoupper($order->status) }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-500 text-xs font-medium">{{ $order->created_at->format('d M Y, H:i') }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
         </div>
     </div>
 @endsection

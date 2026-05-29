@@ -108,26 +108,26 @@
                             <div class="absolute -top-4 left-0 w-full h-4"></div>
                             
                             @if(Auth::user()->role === 'admin')
-                            <a href="{{ route('admin.dashboard') }}" class="block px-4 py-3 text-sm font-bold text-crave-teal bg-crave-lime/10 hover:bg-crave-lime/20 rounded-t-lg">
-                                🛡️ Dasbor Admin
+                            <a href="{{ route('admin.dashboard') }}" class="block px-4 py-3 text-sm font-bold text-crave-teal bg-crave-lime/10 hover:bg-crave-lime/20 rounded-t-lg flex items-center gap-2">
+                                <ion-icon name="shield-checkmark-outline"></ion-icon> Dasbor Admin
                             </a>
                             <div class="border-t border-gray-100"></div>
                             @endif
-                            <a href="{{ route('profile.show') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-crave-teal {{ Auth::user()->role !== 'admin' ? 'rounded-t-lg' : '' }}">
-                                👤 Profil Saya
+                            <a href="{{ route('profile.show') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-crave-teal {{ Auth::user()->role !== 'admin' ? 'rounded-t-lg' : '' }} flex items-center gap-2">
+                                <ion-icon name="person-outline"></ion-icon> Profil Saya
                             </a>
-                            <a href="{{ route('profile.edit') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-crave-teal">
-                                ⚙️ Edit Profil
+                            <a href="{{ route('profile.edit') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-crave-teal flex items-center gap-2">
+                                <ion-icon name="settings-outline"></ion-icon> Edit Profil
                             </a>
-                            <a href="{{ route('my-transactions') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-crave-teal">
-                                📦 Pesanan Saya
+                            <a href="{{ route('my-transactions') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-crave-teal flex items-center gap-2">
+                                <ion-icon name="cube-outline"></ion-icon> Pesanan Saya
                             </a>
                             
                             <div class="border-t border-gray-100"></div>
                             <form method="POST" action="{{ route('logout') }}" class="block m-0">
                                 @csrf
-                                <button type="submit" class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-b-lg transition-colors">
-                                    🚪 Keluar
+                                <button type="submit" class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-b-lg transition-colors flex items-center gap-2">
+                                    <ion-icon name="log-out-outline"></ion-icon> Keluar
                                 </button>
                             </form>
                         </div>
