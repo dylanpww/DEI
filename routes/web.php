@@ -137,13 +137,21 @@ require __DIR__ . '/auth.php';
 // Route to clear caches for Shared Hosting
 Route::get('/deploy-now', function () {
     try {
+        // Delete bootstrap cache files to force package discovery (crucial for Livewire on shared hosting)
+        $packages = base_path('bootstrap/cache/packages.php');
+        $services = base_path('bootstrap/cache/services.php');
+        if (file_exists($packages)) unlink($packages);
+        if (file_exists($services)) unlink($services);
+
         \Illuminate\Support\Facades\Artisan::call('view:clear');
         \Illuminate\Support\Facades\Artisan::call('cache:clear');
         \Illuminate\Support\Facades\Artisan::call('config:clear');
         \Illuminate\Support\Facades\Artisan::call('route:clear');
-        return "Semua cache berhasil dibersihkan! (View, Cache, Config, Route). Silakan refresh halaman chat.";
+        return "Semua cache DAN bootstrap cache berhasil dibersihkan! (View, Cache, Config, Route, Packages). Silakan refresh halaman chat.";
     } catch (\Exception $e) {
         return "Gagal membersihkan cache: " . $e->getMessage();
     }
 });
 
+
+Route::get('/test-render', function() { return view('chat.show', ['conversation' => \App\Models\Conversation::first() ?? new \App\Models\Conversation(['id' => 1, 'buyer_id' => 1, 'seller_id' => 2, 'product_id' => 1])]); });
