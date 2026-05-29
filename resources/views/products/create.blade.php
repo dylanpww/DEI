@@ -106,11 +106,16 @@
                     <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6" x-data="{
                         actualPrice: {{ old('actualPrice', 0) }},
                         discountType: 'fixed',
-                        discountAmount: {{ old('discount', 0) }},
-                        discountPercentage: 0,
+                        inputValue: {{ old('discount', 0) ?: 'null' }},
+                        computedDiscount: {{ old('discount', 0) ?: 0 }},
                         updateDiscount() {
+                            let val = parseFloat(this.inputValue) || 0;
                             if (this.discountType === 'percentage') {
-                                this.discountAmount = Math.round(this.actualPrice * (this.discountPercentage / 100));
+                                // cap at 100%
+                                if(val > 100) { val = 100; this.inputValue = 100; }
+                                this.computedDiscount = Math.round(this.actualPrice * (val / 100));
+                            } else {
+                                this.computedDiscount = val;
                             }
                         }
                     }">
@@ -134,19 +139,17 @@
                                 </select>
                                 
                                 <div class="w-2/3">
-                                    <input x-show="discountType === 'fixed'" type="number" x-model="discountAmount" min="0"
-                                        class="w-full rounded-lg border-gray-300 shadow-sm focus:border-crave-lime py-2.5 px-3 border bg-white" placeholder="Nominal (Rp)">
-                                        
-                                    <input x-show="discountType === 'percentage'" type="number" x-model="discountPercentage" @input="updateDiscount" min="0" max="100"
-                                        class="w-full rounded-lg border-gray-300 shadow-sm focus:border-crave-lime py-2.5 px-3 border bg-white" placeholder="Persentase (%)">
+                                    <input type="number" x-model="inputValue" @input="updateDiscount" min="0"
+                                        class="w-full rounded-lg border-gray-300 shadow-sm focus:border-crave-lime py-2.5 px-3 border bg-white" 
+                                        :placeholder="discountType === 'percentage' ? 'Persentase (%)' : 'Nominal (Rp)'">
                                 </div>
                             </div>
                             
                             <!-- Hidden input to submit the actual discount value to the backend -->
-                            <input type="hidden" name="discount" x-model="discountAmount">
+                            <input type="hidden" name="discount" :value="computedDiscount">
                             
-                            <p x-show="discountType === 'percentage' && discountPercentage > 0" class="text-xs text-crave-darkgreen mt-2 font-bold bg-crave-lime/20 px-3 py-1.5 rounded-lg border border-crave-lime/30 w-fit">
-                                Potongan: Rp <span x-text="new Intl.NumberFormat('id-ID').format(discountAmount)"></span>
+                            <p x-show="discountType === 'percentage' && computedDiscount > 0" class="text-xs text-crave-darkgreen mt-2 font-bold bg-crave-lime/20 px-3 py-1.5 rounded-lg border border-crave-lime/30 w-fit">
+                                Potongan: Rp <span x-text="new Intl.NumberFormat('id-ID').format(computedDiscount)"></span>
                             </p>
                             
                             @error('discount')
