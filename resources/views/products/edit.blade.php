@@ -131,27 +131,11 @@
                     </div>
 
                     <!-- Price and Discount Wrapper -->
-                    <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6" x-data="{
-                        actualPrice: {{ (int) old('actualPrice', $product->actualPrice) }},
-                        discountType: 'fixed',
-                        inputValue: {{ old('discount', $product->discount) !== null && old('discount', $product->discount) !== '' ? (int) old('discount', $product->discount) : 'null' }},
-                        computedDiscount: {{ (int) old('discount', $product->discount) }},
-                        updateDiscount() {
-                            let val = parseFloat(this.inputValue) || 0;
-                            if (this.discountType === 'percentage') {
-                                // cap at 100%
-                                if(val > 100) { val = 100; this.inputValue = 100; }
-                                this.computedDiscount = Math.round(this.actualPrice * (val / 100));
-                            } else {
-                                this.computedDiscount = val;
-                            }
-                            document.getElementById('hidden_discount_edit').value = this.computedDiscount;
-                        }
-                    }">
+                    <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6" id="discount-wrapper">
                         <!-- Price -->
                         <div>
                             <label for="actualPrice" class="block text-sm font-semibold text-gray-700 mb-1">Harga Asli (Rp)</label>
-                            <input type="number" name="actualPrice" id="actualPrice" x-model="actualPrice" @input="updateDiscount" required min="0"
+                            <input type="number" name="actualPrice" id="actualPrice" value="{{ old('actualPrice', $product->actualPrice) }}" required min="0"
                                 class="w-full rounded-lg border-gray-300 shadow-sm focus:border-crave-lime py-2.5 px-3 border bg-white">
                             @error('actualPrice')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -162,23 +146,23 @@
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-1">Diskon</label>
                             <div class="flex gap-3">
-                                <select x-model="discountType" @change="updateDiscount" class="rounded-lg border-gray-300 shadow-sm focus:border-crave-lime py-2.5 px-3 border w-1/3 bg-white font-medium text-gray-700">
+                                <select id="discountType" class="rounded-lg border-gray-300 shadow-sm focus:border-crave-lime py-2.5 px-3 border w-1/3 bg-white font-medium text-gray-700">
                                     <option value="fixed">Rp</option>
                                     <option value="percentage">%</option>
                                 </select>
                                 
                                 <div class="w-2/3">
-                                    <input type="number" x-model="inputValue" @input="updateDiscount" min="0"
+                                    <input type="number" id="discountInput" min="0"
                                         class="w-full rounded-lg border-gray-300 shadow-sm focus:border-crave-lime py-2.5 px-3 border bg-white" 
-                                        :placeholder="discountType === 'percentage' ? 'Persentase (%)' : 'Nominal (Rp)'">
+                                        placeholder="Nominal (Rp)">
                                 </div>
                             </div>
                             
                             <!-- Hidden input to submit the actual discount value to the backend -->
                             <input type="hidden" id="hidden_discount_edit" name="discount" value="{{ old('discount', $product->discount) !== '' && old('discount', $product->discount) !== null ? (int) old('discount', $product->discount) : 0 }}">
                             
-                            <p x-show="discountType === 'percentage' && computedDiscount > 0" class="text-xs text-crave-darkgreen mt-2 font-bold bg-crave-lime/20 px-3 py-1.5 rounded-lg border border-crave-lime/30 w-fit">
-                                Potongan: Rp <span x-text="new Intl.NumberFormat('id-ID').format(computedDiscount)"></span>
+                            <p id="discountHelper" class="hidden text-xs text-crave-darkgreen mt-2 font-bold bg-crave-lime/20 px-3 py-1.5 rounded-lg border border-crave-lime/30 w-fit">
+                                Potongan: Rp <span id="discountPreview">0</span>
                             </p>
                             
                             @error('discount')
@@ -258,6 +242,57 @@
                 previewContainer.classList.add('hidden');
                 uploadPrompt.classList.remove('hidden');
             });
+
+            // Discount Logic Implementation (Vanilla JS)
+            const actualPriceInput = document.getElementById('actualPrice');
+            const discountTypeSelect = document.getElementById('discountType');
+            const discountInput = document.getElementById('discountInput');
+            const hiddenDiscount = document.getElementById('hidden_discount_edit');
+            const discountHelper = document.getElementById('discountHelper');
+            const discountPreview = document.getElementById('discountPreview');
+
+            function calculateDiscount() {
+                let actualPrice = parseFloat(actualPriceInput.value) || 0;
+                let inputValue = parseFloat(discountInput.value) || 0;
+                let discountType = discountTypeSelect.value;
+                let computedDiscount = 0;
+
+                if (discountType === 'percentage') {
+                    if (inputValue > 100) {
+                        inputValue = 100;
+                        discountInput.value = 100;
+                    }
+                    computedDiscount = Math.round(actualPrice * (inputValue / 100));
+                    
+                    if (computedDiscount > 0) {
+                        discountHelper.classList.remove('hidden');
+                        discountPreview.textContent = new Intl.NumberFormat('id-ID').format(computedDiscount);
+                    } else {
+                        discountHelper.classList.add('hidden');
+                    }
+                } else {
+                    computedDiscount = inputValue;
+                    discountHelper.classList.add('hidden');
+                }
+
+                hiddenDiscount.value = computedDiscount;
+            }
+
+            if (actualPriceInput && discountInput && discountTypeSelect) {
+                actualPriceInput.addEventListener('input', calculateDiscount);
+                discountInput.addEventListener('input', calculateDiscount);
+                discountTypeSelect.addEventListener('change', function() {
+                    discountInput.placeholder = this.value === 'percentage' ? 'Persentase (%)' : 'Nominal (Rp)';
+                    calculateDiscount();
+                });
+
+                // Initialize form state
+                if (hiddenDiscount.value && parseFloat(hiddenDiscount.value) > 0) {
+                    discountInput.value = hiddenDiscount.value;
+                    discountTypeSelect.value = 'fixed';
+                    calculateDiscount();
+                }
+            }
         });
     </script>
 @endpush
