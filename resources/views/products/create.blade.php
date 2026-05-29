@@ -117,14 +117,14 @@
                     </div>
 
                     <!-- Price and Discount Wrapper -->
-                    <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6" x-data='{
-                        actualPrice: Number(@json(old("actualPrice", 0))) || 0,
-                        discountType: "fixed",
-                        inputValue: @json(old("discount")) ? Number(@json(old("discount"))) : null,
-                        computedDiscount: Number(@json(old("discount", 0))) || 0,
+                    <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6" x-data="{
+                        actualPrice: {{ (int) old('actualPrice', 0) }},
+                        discountType: 'fixed',
+                        inputValue: {{ old('discount') !== null && old('discount') !== '' ? (int) old('discount') : 'null' }},
+                        computedDiscount: {{ (int) old('discount', 0) }},
                         updateDiscount() {
                             let val = parseFloat(this.inputValue) || 0;
-                            if (this.discountType === "percentage") {
+                            if (this.discountType === 'percentage') {
                                 // cap at 100%
                                 if(val > 100) { val = 100; this.inputValue = 100; }
                                 this.computedDiscount = Math.round(this.actualPrice * (val / 100));
@@ -132,7 +132,7 @@
                                 this.computedDiscount = val;
                             }
                         }
-                    }'>
+                    }">
                         <!-- Price -->
                         <div>
                             <label for="actualPrice" class="block text-sm font-semibold text-gray-700 mb-1">Harga Asli (Rp)</label>
