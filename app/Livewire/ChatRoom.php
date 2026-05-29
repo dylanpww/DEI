@@ -15,7 +15,7 @@ class ChatRoom extends Component
     public function mount(Conversation $conversation)
     {
         $userId = Auth::id();
-        if ($conversation->buyer_id !== $userId && $conversation->seller_id !== $userId) {
+        if ($conversation->buyer_id != $userId && $conversation->seller_id != $userId) {
             abort(403);
         }
 

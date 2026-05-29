@@ -87,7 +87,7 @@
                                                     Lihat Review <ion-icon name="chevron-forward-outline"></ion-icon>
                                                 </a>
                                             @elseif ($order->status == 'success' || strtolower($order->status) == 'settlement')
-                                                <button type="button" x-data @click="$dispatch('open-review-modal', {{ $item->product_id }})"
+                                                <button type="button" x-data @click="$dispatch('open-review-modal', '{{ $item->product_id }}')"
                                                     class="mt-2 text-white bg-crave-orange hover:bg-orange-600 px-4 py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 transition-colors shadow-sm">
                                                     Beri Review <ion-icon name="star"></ion-icon>
                                                 </button>
