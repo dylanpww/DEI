@@ -59,7 +59,7 @@
                 <!-- Desktop Menu -->
                 <nav class="hidden md:flex space-x-10 text-gray-600 font-medium text-lg">
                     <a href="{{ route('explore') }}" class="{{ request()->is('explore') ? 'text-crave-darkgreen border-b-2 border-crave-lime' : 'hover:text-crave-lime' }} transition-colors pb-1">Jelajah</a>
-                    @if(!auth()->check() || (auth()->check() && Auth::user()->role === 'user'))
+                    @if(!auth()->check() || (auth()->check() && in_array(Auth::user()->role, ['user', 'admin'])))
                     <a href="{{ route('cart') }}" class="{{ request()->is('cart') ? 'text-crave-darkgreen border-b-2 border-crave-lime' : 'hover:text-crave-lime' }} transition-colors pb-1 flex items-center">Keranjang
                         @php
                             $totalQty = array_sum(array_column(session('cart', []), 'quantity'));

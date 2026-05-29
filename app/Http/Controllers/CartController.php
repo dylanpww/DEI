@@ -14,7 +14,7 @@ class CartController extends Controller
 {
     public function index()
     {
-        if (Auth::check() && Auth::user()->role !== 'user') {
+        if (Auth::check() && !in_array(Auth::user()->role, ['user', 'admin'])) {
             return redirect()->route('explore')->with('error', 'Penjual tidak dapat melakukan pembelian.');
         }
 
@@ -63,7 +63,7 @@ class CartController extends Controller
 
     public function addToCart(Request $request)
     {
-        if (Auth::check() && Auth::user()->role !== 'user') {
+        if (Auth::check() && !in_array(Auth::user()->role, ['user', 'admin'])) {
             return redirect()->route('explore')->with('error', 'Penjual tidak dapat melakukan pembelian.');
         }
 
@@ -114,7 +114,7 @@ class CartController extends Controller
 
     public function checkout()
     {
-        if (Auth::check() && Auth::user()->role !== 'user') {
+        if (Auth::check() && !in_array(Auth::user()->role, ['user', 'admin'])) {
             return redirect()->route('explore')->with('error', 'Penjual tidak dapat melakukan pembelian.');
         }
 

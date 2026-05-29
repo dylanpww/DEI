@@ -116,7 +116,7 @@
                 </div>
 
                 <div class="mt-auto space-y-4">
-                    @if(!Auth::check() || (Auth::check() && Auth::user()->role === 'user'))
+                    @if(!Auth::check() || (Auth::check() && in_array(Auth::user()->role, ['user', 'admin'])))
                     <form action="{{ route('cart.add') }}" method="POST">
                         @csrf
                         <input type="hidden" name="product_id" value="{{ $product->product_ID }}">
