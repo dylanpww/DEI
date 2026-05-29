@@ -13,6 +13,20 @@
         </div>
 
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+            @if ($errors->any())
+                <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
+                    <div class="flex items-center mb-2">
+                        <ion-icon name="alert-circle" class="text-red-500 text-xl mr-2"></ion-icon>
+                        <h3 class="text-red-800 font-bold">Ada kesalahan pada input Anda:</h3>
+                    </div>
+                    <ul class="list-disc list-inside text-sm text-red-700">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                 @csrf
 
@@ -103,14 +117,14 @@
                     </div>
 
                     <!-- Price and Discount Wrapper -->
-                    <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6" x-data="{
-                        actualPrice: {{ old('actualPrice', 0) }},
-                        discountType: 'fixed',
-                        inputValue: {{ old('discount', 0) ?: 'null' }},
-                        computedDiscount: {{ old('discount', 0) ?: 0 }},
+                    <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6" x-data='{
+                        actualPrice: Number(@json(old("actualPrice", 0))) || 0,
+                        discountType: "fixed",
+                        inputValue: @json(old("discount")) ? Number(@json(old("discount"))) : null,
+                        computedDiscount: Number(@json(old("discount", 0))) || 0,
                         updateDiscount() {
                             let val = parseFloat(this.inputValue) || 0;
-                            if (this.discountType === 'percentage') {
+                            if (this.discountType === "percentage") {
                                 // cap at 100%
                                 if(val > 100) { val = 100; this.inputValue = 100; }
                                 this.computedDiscount = Math.round(this.actualPrice * (val / 100));
@@ -118,7 +132,7 @@
                                 this.computedDiscount = val;
                             }
                         }
-                    }">
+                    }'>
                         <!-- Price -->
                         <div>
                             <label for="actualPrice" class="block text-sm font-semibold text-gray-700 mb-1">Harga Asli (Rp)</label>
@@ -146,7 +160,7 @@
                             </div>
                             
                             <!-- Hidden input to submit the actual discount value to the backend -->
-                            <input type="hidden" name="discount" :value="computedDiscount">
+                            <input type="number" name="discount" x-model="computedDiscount" class="hidden">
                             
                             <p x-show="discountType === 'percentage' && computedDiscount > 0" class="text-xs text-crave-darkgreen mt-2 font-bold bg-crave-lime/20 px-3 py-1.5 rounded-lg border border-crave-lime/30 w-fit">
                                 Potongan: Rp <span x-text="new Intl.NumberFormat('id-ID').format(computedDiscount)"></span>
