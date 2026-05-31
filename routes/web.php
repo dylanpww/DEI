@@ -24,36 +24,86 @@ Route::get('/explore', function () {
         ->take(12)
         ->get();
 
-    $foodWasteSaved = \App\Models\OrderItem::whereHas('order', function($q) {
+    $formatWeight = function($weight) {
+        return ($weight >= 1000) ? number_format($weight / 1000, 1) . ' KG' : $weight . ' Gram';
+    };
+
+    // Global Stats
+    $globalTotal = \App\Models\OrderItem::whereHas('order', function($q) {
         $q->whereIn('status', ['success', 'settlement']);
     })->with('product')->get()->sum(function($item) {
         return $item->qty * ($item->product->weight_in_grams ?? 0);
     });
 
-    // Konversi ke KG jika lebih dari 1000 gram
-    if ($foodWasteSaved >= 1000) {
-        $foodWasteSaved = number_format($foodWasteSaved / 1000, 1) . ' KG';
-    } else {
-        $foodWasteSaved = $foodWasteSaved . ' Gram';
+    $globalToday = \App\Models\OrderItem::whereHas('order', function($q) {
+        $q->whereIn('status', ['success', 'settlement'])
+          ->whereDate('created_at', \Carbon\Carbon::today());
+    })->with('product')->get()->sum(function($item) {
+        return $item->qty * ($item->product->weight_in_grams ?? 0);
+    });
+
+    $userTotal = 0;
+    $userToday = 0;
+
+    if (auth()->check()) {
+        $userTotal = \App\Models\OrderItem::whereHas('order', function($q) {
+            $q->whereIn('status', ['success', 'settlement'])
+              ->where('user_id', auth()->id());
+        })->with('product')->get()->sum(function($item) {
+            return $item->qty * ($item->product->weight_in_grams ?? 0);
+        });
+
+        $userToday = \App\Models\OrderItem::whereHas('order', function($q) {
+            $q->whereIn('status', ['success', 'settlement'])
+              ->where('user_id', auth()->id())
+              ->whereDate('created_at', \Carbon\Carbon::today());
+        })->with('product')->get()->sum(function($item) {
+            return $item->qty * ($item->product->weight_in_grams ?? 0);
+        });
     }
 
-    return view('explore', compact('categories', 'products', 'foodWasteSaved'));
+    $foodWasteStats = [
+        'global' => [
+            'total' => $formatWeight($globalTotal),
+            'today' => $formatWeight($globalToday)
+        ],
+        'user' => [
+            'total' => $formatWeight($userTotal),
+            'today' => $formatWeight($userToday)
+        ]
+    ];
+
+    return view('explore', compact('categories', 'products', 'foodWasteStats'));
 })->name('explore');
 
 Route::get('/dashboard', function () {
-    $foodWasteSaved = \App\Models\OrderItem::whereHas('order', function($q) {
-        $q->whereIn('status', ['success', 'settlement']);
+    $formatWeight = function($weight) {
+        return ($weight >= 1000) ? number_format($weight / 1000, 1) . ' KG' : $weight . ' Gram';
+    };
+
+    $userTotal = \App\Models\OrderItem::whereHas('order', function($q) {
+        $q->whereIn('status', ['success', 'settlement'])
+          ->where('user_id', auth()->id());
     })->with('product')->get()->sum(function($item) {
         return $item->qty * ($item->product->weight_in_grams ?? 0);
     });
 
-    if ($foodWasteSaved >= 1000) {
-        $foodWasteSaved = number_format($foodWasteSaved / 1000, 1) . ' KG';
-    } else {
-        $foodWasteSaved = $foodWasteSaved . ' Gram';
-    }
+    $userToday = \App\Models\OrderItem::whereHas('order', function($q) {
+        $q->whereIn('status', ['success', 'settlement'])
+          ->where('user_id', auth()->id())
+          ->whereDate('created_at', \Carbon\Carbon::today());
+    })->with('product')->get()->sum(function($item) {
+        return $item->qty * ($item->product->weight_in_grams ?? 0);
+    });
 
-    return view('dashboard', compact('foodWasteSaved'));
+    $foodWasteStats = [
+        'user' => [
+            'total' => $formatWeight($userTotal),
+            'today' => $formatWeight($userToday)
+        ]
+    ];
+
+    return view('dashboard', compact('foodWasteStats'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/category/{categoryId}', [ProductController::class, 'byCategory'])->name('products.by-category');

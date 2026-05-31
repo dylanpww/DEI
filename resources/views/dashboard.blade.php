@@ -11,14 +11,20 @@
                 <h1 class="font-black text-4xl text-crave-teal drop-shadow-sm mb-2">Selamat datang kembali! 🌿</h1>
                 <p class="text-gray-500 font-medium text-lg">Siap menyelamatkan makanan hari ini?</p>
             </div>
-            @if(isset($foodWasteSaved))
-            <div class="bg-gradient-to-r from-crave-lime to-crave-green px-8 py-5 rounded-3xl flex items-center gap-5 shadow-[0_10px_30px_rgba(195,221,42,0.4)] transform hover:-translate-y-1 transition-transform border border-crave-lime/50">
+            @if(isset($foodWasteStats))
+            <div class="bg-gradient-to-r from-crave-lime to-crave-green px-6 py-4 rounded-3xl flex items-center gap-5 shadow-[0_10px_30px_rgba(195,221,42,0.4)] transform hover:-translate-y-1 transition-transform border border-crave-lime/50">
                 <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
                     <ion-icon name="earth" class="text-3xl text-crave-darkgreen drop-shadow-md"></ion-icon>
                 </div>
-                <div>
-                    <p class="text-crave-darkgreen/80 font-bold text-sm tracking-wide">Food Waste Diselamatkan</p>
-                    <p class="text-2xl font-black text-crave-teal drop-shadow-sm">{{ $foodWasteSaved }}</p>
+                <div class="flex flex-col gap-2">
+                    <div>
+                        <p class="text-crave-darkgreen/80 font-bold text-xs tracking-wide uppercase">Total Food Waste Anda</p>
+                        <p class="text-2xl font-black text-crave-teal drop-shadow-sm leading-none">{{ $foodWasteStats['user']['total'] }}</p>
+                    </div>
+                    <div class="border-t border-crave-darkgreen/20 pt-1.5">
+                        <p class="text-crave-darkgreen/80 font-bold text-[10px] tracking-wide uppercase">Diselamatkan Hari Ini</p>
+                        <p class="text-lg font-black text-crave-teal drop-shadow-sm leading-none">{{ $foodWasteStats['user']['today'] }}</p>
+                    </div>
                 </div>
             </div>
             @endif

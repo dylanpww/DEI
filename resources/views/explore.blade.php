@@ -11,9 +11,19 @@
                     { id: 2, title: 'BAKERY SURPLUS', subtitle: 'Fresh pastries for half the price', image: '{{ asset('images/mascot-2.png') }}', discount: 'Beli 1 Gratis 1', color: 'from-crave-orange to-crave-pink' }
                 ],
                 next() { this.activeSlide = this.activeSlide === this.slides.length - 1 ? 0 : this.activeSlide + 1 },
-                prev() { this.activeSlide = this.activeSlide === 0 ? this.slides.length - 1 : this.activeSlide - 1 }
+                prev() { this.activeSlide = this.activeSlide === 0 ? this.slides.length - 1 : this.activeSlide - 1 },
+                touchStartX: 0,
+                touchEndX: 0,
+                handleTouchStart(e) { this.touchStartX = e.changedTouches[0].screenX; },
+                handleTouchEnd(e) { 
+                    this.touchEndX = e.changedTouches[0].screenX; 
+                    if (this.touchEndX < this.touchStartX - 50) this.next();
+                    if (this.touchEndX > this.touchStartX + 50) this.prev();
+                }
             }" 
             x-init="setInterval(() => next(), 5000)"
+            @touchstart="handleTouchStart"
+            @touchend="handleTouchEnd"
             class="relative w-full h-[400px] md:h-[500px] rounded-[2.5rem] overflow-hidden shadow-2xl group">
             
             <template x-for="(slide, index) in slides" :key="slide.id">
@@ -73,15 +83,43 @@
                 </h1>
             </div>
             
-            @if(isset($foodWasteSaved))
-            <div class="bg-gradient-to-r from-crave-lime to-crave-green px-8 py-5 rounded-3xl flex items-center gap-5 shadow-[0_10px_30px_rgba(195,221,42,0.4)] transform hover:-translate-y-1 transition-transform border border-crave-lime/50">
-                <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                    <ion-icon name="earth" class="text-4xl text-crave-darkgreen drop-shadow-md"></ion-icon>
+            @if(isset($foodWasteStats))
+            <div class="flex flex-col sm:flex-row gap-4">
+                <!-- Global Stats -->
+                <div class="bg-gradient-to-r from-crave-lime to-crave-green px-6 py-4 rounded-3xl flex items-center gap-5 shadow-[0_10px_30px_rgba(195,221,42,0.4)] transform hover:-translate-y-1 transition-transform border border-crave-lime/50">
+                    <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                        <ion-icon name="earth" class="text-3xl text-crave-darkgreen drop-shadow-md"></ion-icon>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <div>
+                            <p class="text-crave-darkgreen/80 font-bold text-xs tracking-wide uppercase">Total Food Waste Global</p>
+                            <p class="text-2xl font-black text-crave-teal drop-shadow-sm leading-none">{{ $foodWasteStats['global']['total'] }}</p>
+                        </div>
+                        <div class="border-t border-crave-darkgreen/20 pt-1.5">
+                            <p class="text-crave-darkgreen/80 font-bold text-[10px] tracking-wide uppercase">Diselamatkan Hari Ini</p>
+                            <p class="text-lg font-black text-crave-teal drop-shadow-sm leading-none">{{ $foodWasteStats['global']['today'] }}</p>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <p class="text-crave-darkgreen/80 font-bold text-sm tracking-wide">Food Waste Diselamatkan</p>
-                    <p class="text-3xl font-black text-crave-teal drop-shadow-sm">{{ $foodWasteSaved }}</p>
+
+                <!-- User Stats -->
+                @if(auth()->check())
+                <div class="bg-white/80 backdrop-blur-xl px-6 py-4 rounded-3xl flex items-center gap-5 shadow-sm transform hover:-translate-y-1 transition-transform border border-gray-100">
+                    <div class="w-12 h-12 bg-crave-lime/20 rounded-full flex items-center justify-center">
+                        <ion-icon name="person" class="text-3xl text-crave-teal"></ion-icon>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <div>
+                            <p class="text-gray-500 font-bold text-xs tracking-wide uppercase">Kontribusi Anda</p>
+                            <p class="text-xl font-black text-crave-teal drop-shadow-sm leading-none">{{ $foodWasteStats['user']['total'] }}</p>
+                        </div>
+                        <div class="border-t border-gray-200 pt-1.5">
+                            <p class="text-gray-400 font-bold text-[10px] tracking-wide uppercase">Hari Ini</p>
+                            <p class="text-md font-black text-crave-teal drop-shadow-sm leading-none">{{ $foodWasteStats['user']['today'] }}</p>
+                        </div>
+                    </div>
                 </div>
+                @endif
             </div>
             @endif
         </div>
@@ -102,7 +140,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl">
                 @foreach ($categories as $category)
                     <a href="{{ route('products.by-category', $category->category_id) }}"
-                        class="group relative overflow-hidden rounded-[2rem] p-8 flex items-center gap-6 shadow-sm hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-white {{ $category->name === 'Makanan' ? 'bg-gradient-to-br from-crave-lime to-crave-green' : 'bg-gradient-to-br from-crave-lightpink to-crave-pink' }}">
+                        class="group relative overflow-hidden rounded-[2rem] p-8 flex items-center gap-6 shadow-sm hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-white {{ $category->name === 'Makanan' ? 'bg-gradient-to-br from-crave-lime to-crave-green' : 'bg-gradient-to-br from-crave-teal to-crave-darkgreen' }}">
                         
                         <!-- Background Glow/Pattern -->
                         <div class="absolute -right-8 -top-8 w-40 h-40 bg-white/20 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
@@ -167,7 +205,7 @@
                                 
                                 <div class="flex items-end justify-between mb-6 mt-auto">
                                     <div>
-                                        <p class="text-xs text-gray-400 font-semibold mb-1">Harga Diselamatkan</p>
+                                        <p class="text-xs text-gray-400 font-semibold mb-1">Harga</p>
                                         <p class="text-2xl font-black text-crave-darkgreen">Rp {{ number_format($product->actualPrice - $product->discount, 0, ',', '.') }}</p>
                                         @if ($product->discount > 0)
                                             <p class="text-sm text-gray-400 line-through font-medium">Rp {{ number_format($product->actualPrice, 0, ',', '.') }}</p>
